@@ -1,10 +1,66 @@
 
-.normal {
-  background: #7979F2;
+.flex {
+  display: flex;
 }
 .amap-copyright{
   opacity: 0 !important;
 }
 .amap-logo {
   display: none !important
+}
+.info {
+  .flex();
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+}
+.infoWin {
+  .flex();
+  background-color: rgba(23,102,144,0.7);
+  padding: 8px;
+  border-radius: 6px;
+  border: 2px solid #47caff;
+  flex-direction: column;
+}
+.top {
+  padding-bottom: 5px;
+}
+.middle {
+  .flex();
+  align-items: center;
+}
+.middle_l {
+  flex-direction: column;
+  .flex();
+  margin-right: 15px;
+}
+.middle_r {
+  .flex();
+  flex-direction: column;
+}
+.bottom {
+  .flex();
+  width: 100%;
+  justify-content: flex-end;
+}
+.btn {
+  .flex();
+  color: #fff;
+  margin-top: 5px;
+  padding: 6px 12px;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  background-color: rgba(23,102,144,0.7);
+}
+.btn:hover {
+  opacity:.8;
+  filter:alpha(opacity=80);
+  color:#fff
+}
+.btn:active {
+  opacity:1;
+  filter:alpha(opacity=100)
 }
