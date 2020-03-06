@@ -1,7 +1,7 @@
 
 const deviceData = [
     {
-        "deviceId": 10001,
+        "deviceId": '10001',
         "battery": {
             "voltage": 100,
             "current": 88,
@@ -32,7 +32,7 @@ const deviceData = [
         "timestamp": new Date().valueOf()
     },
     {
-        "deviceId": 10002,
+        "deviceId": '10002',
         "battery": {
             "voltage": 100,
             "current": 36,
@@ -63,7 +63,7 @@ const deviceData = [
         "timestamp": new Date().valueOf()
     },
     {
-        "deviceId": 10003,
+        "deviceId": '10003',
         "battery": {
             "voltage": 100,
             "current": 62,
