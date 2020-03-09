@@ -1,6 +1,6 @@
 // @ts-ignore
 /**
- * markers      --所有设备的点集合
+ * devices      --所有设备的点集合
  * drones       --所有工作设备的集合
  * lines        --所有工作设备的轨迹集合
  */
@@ -9,6 +9,7 @@ import { LineLayer, Scene, Scale, Zoom, Popup, Marker, MarkerLayer, PointLayer }
 import { GaodeMap, Mapbox } from '@antv/l7-maps';
 import * as React from 'react';
 import { Descriptions } from 'antd';
+import { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDeviceData, getDeviceDataId } from './service';
 import styles from './FlightStatus.less'
@@ -29,12 +30,15 @@ const colors = {
   magenta4: '#ff85c0',
   gray6: '#bfbfbf'
 }
+const AppId = 'urtc-pynapzli'
+const AppKey = '384d6fc6b005a8d2897f6225c18f30c9'
+const UserId = 'afnyhnizq9l4l9ev_camera3' + Math.floor(Math.random() * 1000000).toString();
 
 export default class FlightStatus extends React.Component {
 
   //模拟websocket请求
   getData() {
-    let ws = new WebSocket('ws://localhost:8888')
+    let ws = new WebSocket('ws://localhost:8089/websocket')
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
       console.log('客户端连接成功')
@@ -52,11 +56,12 @@ export default class FlightStatus extends React.Component {
 
   componentWillUnmount() {
     this.scene.destroy();
-    // this.ws.close()
+    this.ws.close()
     // clearInterval(this.time)
   }
 
   async componentDidMount() {
+    // this.clickId = ''
     const that = this
     //创建地图，并传入L7
     const map = new AMap.Map('map', {
@@ -76,20 +81,32 @@ export default class FlightStatus extends React.Component {
     this.map = map
     this.scene = scene
 
+    // 获取设备数据信息
     const res = await getDeviceData()
     if (res.status) return
-    const drones = res.data
-    console.log(drones)
+    const data = res.data
+    console.log(data)
 
+    // 初始化设备信息、轨迹
     let markers = []
-    let marker
-    for (let j in drones) {
-      const lng = drones[j].gps.longitude
-      const lat = drones[j].gps.latitude
-      marker = this.createDrone(markerColors[j], lng, lat, drones[j])
+    let devices = {}
+    let lines = {}
+    let points = {}
+    for (let i in data) {
+      const lng = data[i].gps.longitude
+      const lat = data[i].gps.latitude
+      const marker = this.createDrone(markerColors[i], lng, lat, data[i])
+      const line = this.createLine()
+      devices[data[i].deviceId] = marker
+      lines[data[i].deviceId] = line
+      points[data[i].deviceId] = []
       markers.push(marker)
     }
+    this.devices = devices
+    this.lines = lines
+    this.points = points
 
+    // 创建自定义窗体
     let infoWindow = new AMap.InfoWindow({
       isCustom: true,  //使用自定义窗体
       // content: this.createInfoWindow(),
@@ -98,70 +115,37 @@ export default class FlightStatus extends React.Component {
       autoMove: false
     });
     this.infoWindow = infoWindow
+
     let opened = false
-    let point
 
     // 新建websocket连接
-    // let ws = new WebSocket('ws://localhost:8888')
-    // this.ws = ws
-    // // 连接成功就会执行回调函数
-    // ws.onopen = function (params) {
-    //   console.log('客户端连接成功')
-    // }
-    // // 必须用属性的方式监听事件，监听函数的参数是事件对象
-    // ws.onmessage = function (e) {
-    //   // console.log('收到服务器响应', JSON.parse(e.data))
-    //   try {
-    //     point = JSON.parse(e.data)
-    //     // console.log(point.gps.longitude, point.gps.latitude)
-    //     const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
-    //     // console.log(_point)
-    //     points.push(_point)
-    //     marker.setPosition(_point)
-    //     infoWindow.setPosition(_point)
-    //     infoWindow.setContent(that.createInfoWindow(point, that.ts))
-    //     polyline.setPath(points)
-    //     // if(opened){
-    //     //   infoWindow.open(map, this.marker.getPosition())
-    //     // }
-    //   } catch (error) {
-    //     return
-    //   }
-    //   // points.push(point)
-    // }
-
-    // let i = 0
-    // this.time = setInterval(() => {
-    //   const point = _points[i]
-    //   console.log(point.gps.longitude, point.gps.latitude)
-    //   const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
-    //   console.log(_point)
-    //   marker.setPosition(_point)
-    //   i++
-    // }, 1000);
-
-    // console.log(point)
-    // const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
-    // points.push(_point)
-    // this.marker.setPosition(_point)
-    // infoWindow.setPosition(_point)
-    // infoWindow.setContent(this.createInfoWindow(point))
-    // // if(opened){
-    // //   infoWindow.open(map, this.marker.getPosition())
-    // // }
-    // i++
-
-    // console.log(this.createInfoWindow(_points[0]))
-    // marker.on('click', (e) => {
-    //   if (!opened) {
-    //     infoWindow.open(map, marker.getPosition())
-    //     opened = true
-    //   } else {
-    //     infoWindow.close()
-    //     opened = false
-    //   }
-    //   console.log(marker.getPosition())
-    // });
+    let ws = new WebSocket('ws://localhost:8089/websocket')
+    this.ws = ws
+    // 连接成功就会执行回调函数
+    ws.onopen = function (params) {
+      console.log('客户端连接成功')
+    }
+    // 必须用属性的方式监听事件，监听函数的参数是事件对象
+    ws.onmessage = function (e) {
+      // 返回[]和{}做区分
+      try {
+        const point = JSON.parse(e.data)
+        // console.log(point.gps.longitude, point.gps.latitude)
+        const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
+        points[point.deviceId].push(_point)
+        devices[point.deviceId].setPosition(_point)
+        devices[point.deviceId].setExtData(point)
+        console.log(that.clickId, point.deviceId)
+        if (that.clickId === point.deviceId) {
+          infoWindow.setPosition(_point)
+          infoWindow.setContent(that.createInfoWindow(point, that.ts))
+        }
+        lines[point.deviceId].setPath(points[point.deviceId])
+      } catch (error) {
+        return
+      }
+      // points.push(point)
+    }
 
     map.add(markers);
 
@@ -187,11 +171,13 @@ export default class FlightStatus extends React.Component {
     info.className = styles.info
     const infoWin = document.createElement('div')
     infoWin.className = styles.infoWin
+
     // 创建顶部型号
     const top = document.createElement('div')
     top.className = styles.top
     top.innerHTML = `型号：${data.deviceId}`
     infoWin.appendChild(top)
+
     // 创建中部设备信息
     const middle = document.createElement('div')
     middle.className = styles.middle
@@ -204,32 +190,50 @@ export default class FlightStatus extends React.Component {
     middle.appendChild(middle_l)
     middle.appendChild(middle_r)
     infoWin.appendChild(middle)
+
     // 创建底部展示轨迹button
     const bottom = document.createElement('div')
     bottom.className = styles.bottom
-    const btn = document.createElement('button')
-    btn.className = styles.btn
-    btn.innerHTML = '显示/隐藏轨迹'
-    btn.onclick = () => {
+    const btnLine = document.createElement('button')
+    btnLine.className = styles.btn
+    btnLine.innerHTML = '显示/隐藏轨迹'
+    btnLine.onclick = () => {
       this.changeLine(data)
     }
-    bottom.appendChild(btn)
-    infoWin.appendChild(bottom)
 
+    // 创建底部实时画面button
+    const btnLive = document.createElement('button')
+    btnLive.className = styles.btn
+    btnLive.innerHTML = '实时画面'
+    btnLive.onclick = () => {
+      //
+    }
+
+    bottom.appendChild(btnLine)
+    bottom.appendChild(btnLive)
+    infoWin.appendChild(bottom)
     info.appendChild(infoWin)
     return info
   }
 
   changeLine(data) {
     console.log(data)
+    let line = this.lines[data.deviceId]
+    if (line.extData) {
+      line.hide()
+      line.extData = false
+    } else {
+      line.show()
+      line.extData = true
+    }
   }
 
-  // 显示/隐藏轨迹
-  createLine(data) {
+  // 创建设备飞行轨迹
+  createLine(color) {
     let polyline = new AMap.Polyline({
       strokeColor: 'red', // 线条颜色(多条须不同颜色)
       lineJoin: 'round', // 折线拐点连接处样式
-      extData: data
+      extData: false
     });
     polyline.hide()
     polyline.setMap(this.map)
@@ -251,14 +255,16 @@ export default class FlightStatus extends React.Component {
       extData: data
     });
     AMap.event.addListener(marker, 'click', (e) => {
+      console.log(e)
+      that.clickId = data.deviceId
       that.changeInfoWin(data)
     })
     return marker
   }
 
   // 改变自定义窗体的状态
-  changeInfoWin(data) {
-    console.log(data)
+  changeInfoWin(_data) {
+    const data = this.devices[_data.deviceId].getExtData()
     const isOpen = this.infoWindow.getIsOpen()
     const _point = new AMap.LngLat(data.gps.longitude, data.gps.latitude)
     if (isOpen) {

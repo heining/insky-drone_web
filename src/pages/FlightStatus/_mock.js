@@ -1,7 +1,7 @@
 
 const deviceData = [
     {
-        "deviceId": '10001',
+        "deviceId": 'insky760001',
         "battery": {
             "voltage": 100,
             "current": 88,
