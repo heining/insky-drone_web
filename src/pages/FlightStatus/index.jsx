@@ -9,6 +9,7 @@ import * as React from 'react';
 import { LineLayer, Scene, Scale, Zoom, Popup, Marker, MarkerLayer, PointLayer } from '@antv/l7';
 import { GaodeMap, Mapbox } from '@antv/l7-maps';
 import { Descriptions } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDeviceData, getDeviceDataId } from './service';
@@ -33,8 +34,8 @@ const colors = {
 }
 const AppId = 'urtc-pynapzli'
 const AppKey = '384d6fc6b005a8d2897f6225c18f30c9'
-const UserId = 'afnyhnizq9l4l9ev_camera3' + Math.floor(Math.random() * 1000000).toString();
-const RoomId = '123'
+const UserId = 'afnyhnizq9l4l9ev_camera3'
+// const RoomId = '123'
 
 export default class FlightStatus extends React.Component {
   constructor() {
@@ -42,7 +43,6 @@ export default class FlightStatus extends React.Component {
     this.state = {
       clicked: {},
       clickedId: '',
-      roomId: '123',
       userId: UserId,
       isJoinedRoom: false,
       remoteStream: null,
@@ -52,6 +52,7 @@ export default class FlightStatus extends React.Component {
   componentWillUnmount() {
     this.scene.destroy();
     this.ws.close()
+    this.handleLeaveRoom();
   }
 
   async componentDidMount() {
@@ -113,6 +114,7 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
+    // let ws = new WebSocket('ws://172.29.18.49:8888')
     let ws = new WebSocket('ws://localhost:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
@@ -196,7 +198,13 @@ export default class FlightStatus extends React.Component {
     btnLive.className = styles.btn
     btnLive.innerHTML = '实时画面'
     btnLive.onclick = () => {
-      this.createURTC(AppId, AppKey, RoomId, UserId)
+      if (this.state.isJoinedRoom) {
+        this.handleLeaveRoom()
+      } else {
+        console.log(this.state.clickedId)
+        this.createURTC(AppId, AppKey, this.state.clickedId, UserId)
+        this.handleJoinRoom()
+      }
     }
     bottom.appendChild(btnLine)
     bottom.appendChild(btnLive)
@@ -244,7 +252,10 @@ export default class FlightStatus extends React.Component {
       extData: data
     });
     AMap.event.addListener(marker, 'click', (e) => {
-      console.log(e)
+      console.log(e,data)
+      // that.setState({
+      //   clickdeId: data.deviceId
+      // })
       that.state.clickedId = data.deviceId
       that.changeInfoWin(data)
     })
@@ -263,21 +274,26 @@ export default class FlightStatus extends React.Component {
       } else {
         this.infoWindow.setPosition(_point)
         this.infoWindow.setContent(this.createInfoWindow(data))
-        this.state.clicked = data
+        this.setState({
+          clicked:data
+        })
       }
+      this.handleLeaveRoom()
     } else {
       console.log('noOpen')
       this.infoWindow.setContent(this.createInfoWindow(data))
       this.infoWindow.open(this.map, _point)
-      this.state.clicked = data
+      this.setState({
+        clicked:data
+      })
     }
   }
 
   // 创建URTC的client
-  createURTC = (AppId, AppKey, RoomId, UserId) => {
-    const token = sdk.generateToken(AppId, AppKey, RoomId, UserId);
-    console.log(token)
-    this.client = new Client(AppId, token);
+  createURTC = (appId, appKey, roomId, userId) => {
+    console.log(this.state.clickedId)
+    const token = sdk.generateToken(appId, appKey, roomId, userId);
+    this.client = new Client(appId, token);
     this.client.on('stream-added', (remoteStream) => {
       console.info('stream-added: ', remoteStream);
       // 自动订阅
@@ -298,31 +314,71 @@ export default class FlightStatus extends React.Component {
     });
     this.client.on('stream-removed', (remoteStream) => {
       console.info('stream-removed: ', remoteStream);
-      this.setState({ remoteStream: null });
+      this.handleLeaveRoom()
     });
-    this.handleJoinRoom()
   }
 
   // 进入画面房间
-  handleJoinRoom = () => {
-    const { userId, isJoinedRoom } = this.state;
+  handleJoinRoom() {
+    const { clickedId, userId, isJoinedRoom } = this.state;
     if (isJoinedRoom) {
       alert('已经加入了房间');
       return;
     }
-    this.client.joinRoom(RoomId, userId, () => {
-      console.info('加入房间成功');
+    this.client.joinRoom(clickedId, userId, () => {
+      console.info('加入房间成功',this.state.remoteStream);
       this.setState({ isJoinedRoom: true });
     }, (err) => {
       console.error('加入房间失败： ', err);
     });
   }
+  // 离开画面房间
+  handleLeaveRoom() {
+    console.log(this)
+    const { isJoinedRoom } = this.state;
+    if (!isJoinedRoom) {
+      return;
+    }
+    this.client.leaveRoom(() => {
+      console.info('离开房间成功');
+      this.setState({
+        remoteStream: null,
+        isJoinedRoom: false,
+      });
+      this.client = null
+    }, (err) => {
+      console.error('离开房间失败：', err);
+    });
+  }
+  // 视频订阅
+  handleSubscribe = () => {
+    const { remoteStream } = this.state;
+    if (remoteStream) {
+      this.client.subscribe(remoteStream.sid, (err) => {
+        console.error('订阅失败：', err);
+      });
+    }
+  }
+  // 取消视频订阅
+  handleUnsubscribe = () => {
+    const { remoteStream } = this.state;
+    if (remoteStream) {
+      this.client.unsubscribe(remoteStream.sid, (stream) => {
+        console.info('取消订阅成功：', stream);
+      }, (err) => {
+        console.error('订阅失败：', err);
+      });
+    }
+  }
 
   renderRemoteStream() {
     const { remoteStream } = this.state;
     return remoteStream
-      ? <div style={{ position: 'absolute', right: 20, bottom: 20 }}>
-        <MediaPlayer style={{ width: 320 }} key={remoteStream.sid} client={this.client} stream={remoteStream} />
+      ? <div className={styles.box} onClick={(e) => { console.log('father') }}>
+        <div className={styles.closer} onClick={(e) => { e.stopPropagation(), this.handleLeaveRoom() }}>
+          <CloseOutlined />
+        </div>
+        <MediaPlayer style={{ width: 360 }} key={remoteStream.sid} client={this.client} stream={remoteStream} />
       </div>
       : <div></div>
   }
@@ -343,6 +399,7 @@ export default class FlightStatus extends React.Component {
         {
           this.renderRemoteStream()
         }
+        {/* <div style={{position:'absolute',top:0,width:'100%',height:'100%',backgroundColor:'rgba(0,0,0,.5)'}}></div> */}
       </div>
     );
   }

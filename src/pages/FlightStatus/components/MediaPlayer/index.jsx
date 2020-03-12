@@ -1,8 +1,8 @@
 import * as React from 'react';
-import './index.css';
+import styles from './index.less';
 
 function isIOS() {
-  console.log(/.*iphone.*/i.test(navigator.userAgent))
+  console.log(navigator.userAgent)
   return /.*iphone.*/i.test(navigator.userAgent);
 }
 
@@ -66,22 +66,22 @@ export default class MediaPlayer extends React.Component {
     this.videoElem.current.srcObject = null;
   }
 
-  // startGetVolume() {
-  //   const { client, stream } = this.props;
-  //   if (!client || !stream || !stream.audio) {
-  //     return;
-  //   }
-  //   if (this.volumeTimer) {
-  //     clearInterval(this.volumeTimer);
-  //   }
-  //   this.volumeTimer = setInterval(() => {
-  //     const vol = client.getAudioVolume(stream.sid);
-  //     this.setState({ volume: vol })
-  //   }, 1000);
-  // }
-  // stopGetVolume() {
-  //   clearInterval(this.volumeTimer);
-  // }
+  startGetVolume() {
+    const { client, stream } = this.props;
+    if (!client || !stream || !stream.audio) {
+      return;
+    }
+    if (this.volumeTimer) {
+      clearInterval(this.volumeTimer);
+    }
+    this.volumeTimer = setInterval(() => {
+      const vol = client.getAudioVolume(stream.sid);
+      this.setState({ volume: vol })
+    }, 1000);
+  }
+  stopGetVolume() {
+    clearInterval(this.volumeTimer);
+  }
 
   startGetState() {
     const { client, stream } = this.props;
@@ -141,9 +141,9 @@ export default class MediaPlayer extends React.Component {
     const { volume, stats } = this.state;
     return stream.mediaStream
       ? <React.Fragment>
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>音量: {volume} % &nbsp;&nbsp;&nbsp;&nbsp;音频丢包率: {stats.audioLost} %</div>
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>视频丢包率: {stats.videoLost} % &nbsp;&nbsp;&nbsp;&nbsp;网络延时: {stats.rtt} ms</div>
-        </React.Fragment>
+        {/* <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>音量: {volume} % &nbsp;&nbsp;&nbsp;&nbsp;音频丢包率: {stats.audioLost} %</div> */}
+        <div className={styles.stats}>视频丢包率: {stats.videoLost} % &nbsp;&nbsp;&nbsp;&nbsp;网络延时: {stats.rtt} ms</div>
+      </React.Fragment>
       : null;
   }
 
@@ -153,7 +153,7 @@ export default class MediaPlayer extends React.Component {
     const hasMediaStream = !!stream.mediaStream;
 
     return (
-      <div>
+      <div className={styles.mediaPlayer}>
         {/* <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>用户ID: {stream.uid}</div>
         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>流ID: {stream.sid}</div>
         { this.renderStats() } */}
@@ -162,13 +162,14 @@ export default class MediaPlayer extends React.Component {
             ref={this.videoElem}
             webkit-playsinline="true"
             autoPlay
+            muted
             playsInline
             controls={false}
             width={style.width}
           >
           </video>
+          {this.renderStats()}
         </div>
-        <p style={{ display: hasMediaStream ? 'none' : 'block' }}> unsubscribe </p>
       </div>
     )
   }

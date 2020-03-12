@@ -32,7 +32,7 @@ const deviceData = [
         "timestamp": new Date().valueOf()
     },
     {
-        "deviceId": '10002',
+        "deviceId": '10001',
         "battery": {
             "voltage": 100,
             "current": 36,
