@@ -8,12 +8,12 @@
 import * as React from 'react';
 import { LineLayer, Scene, Scale, Zoom, Popup, Marker, MarkerLayer, PointLayer } from '@antv/l7';
 import { GaodeMap, Mapbox } from '@antv/l7-maps';
-import { Descriptions } from 'antd';
+import { Descriptions, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDeviceData, getDeviceDataId } from './service';
-import styles from './FlightStatus.less'
+import styles from './index.less'
 import MediaPlayer from './components/MediaPlayer';
 
 const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge']
@@ -46,6 +46,9 @@ export default class FlightStatus extends React.Component {
       userId: UserId,
       isJoinedRoom: false,
       remoteStream: null,
+      zoom: '',
+      lng: '',
+      lat: '',
     }
   }
 
@@ -53,6 +56,7 @@ export default class FlightStatus extends React.Component {
     this.scene.destroy();
     this.ws.close()
     this.handleLeaveRoom();
+    // clearTimeout(this.time)
   }
 
   async componentDidMount() {
@@ -75,6 +79,9 @@ export default class FlightStatus extends React.Component {
     });
     this.map = map
     this.scene = scene
+    this.setState({
+      zoom: map.getZoom()
+    })
 
     // 获取设备数据信息
     const res = await getDeviceData()
@@ -105,7 +112,7 @@ export default class FlightStatus extends React.Component {
     let infoWindow = new AMap.InfoWindow({
       isCustom: true,  //使用自定义窗体
       // content: this.createInfoWindow(),
-      // closeWhenClickMap: true,
+      closeWhenClickMap: true,
       offset: new AMap.Pixel(0, -20),
       autoMove: true
     });
@@ -156,8 +163,20 @@ export default class FlightStatus extends React.Component {
     map.addControl(scale);
 
     // 监听鼠标位置经纬度
-    // map.on('mousemove',e => {console.log(e)})
+    map.on('mousemove', e => {
+      this.setState({
+        lng: e.lnglat.lng,
+        lat: e.lnglat.lat,
+      })
+    })
 
+    // 监听地图缩放级别
+    map.on('zoomchange', () => {
+      this.setState({
+        zoom: map.getZoom()
+      })
+      console.log(map.getZoom())
+    });
   }
 
   // 创建自定义信息展示窗口
@@ -252,7 +271,7 @@ export default class FlightStatus extends React.Component {
       extData: data
     });
     AMap.event.addListener(marker, 'click', (e) => {
-      console.log(e,data)
+      console.log(e, data)
       // that.setState({
       //   clickdeId: data.deviceId
       // })
@@ -275,7 +294,7 @@ export default class FlightStatus extends React.Component {
         this.infoWindow.setPosition(_point)
         this.infoWindow.setContent(this.createInfoWindow(data))
         this.setState({
-          clicked:data
+          clicked: data
         })
       }
       this.handleLeaveRoom()
@@ -284,7 +303,7 @@ export default class FlightStatus extends React.Component {
       this.infoWindow.setContent(this.createInfoWindow(data))
       this.infoWindow.open(this.map, _point)
       this.setState({
-        clicked:data
+        clicked: data
       })
     }
   }
@@ -326,8 +345,19 @@ export default class FlightStatus extends React.Component {
       return;
     }
     this.client.joinRoom(clickedId, userId, () => {
-      console.info('加入房间成功',this.state.remoteStream);
+      message.config({
+        top: 100,
+      });
+      console.info('加入房间成功', this.state.remoteStream);
       this.setState({ isJoinedRoom: true });
+      this.time = setTimeout(() => {
+        console.log(this.state.remoteStream)
+        if (!this.state.remoteStream) {
+          message.warning('暂无实时画面，请稍后再试', 2)
+          this.handleLeaveRoom()
+        }
+        this.time = null
+      }, 500);
     }, (err) => {
       console.error('加入房间失败： ', err);
     });
@@ -371,6 +401,19 @@ export default class FlightStatus extends React.Component {
     }
   }
 
+  renderLnglat = () => {
+    const { zoom, lng, lat } = this.state
+    return <div style={{ position: 'absolute',display:'flex', bottom: 3, left: 120, color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
+      {lng ?
+        <div style={{width:130}}>经度：{lng}</div> : <div></div>
+      }
+      {lat ?
+        <div style={{width:130}}>纬度：{lat}</div> : <div></div>
+      }
+      <div style={{width:100}}>缩放级别：{zoom}</div>
+    </div>
+  }
+
   renderRemoteStream() {
     const { remoteStream } = this.state;
     return remoteStream
@@ -399,7 +442,21 @@ export default class FlightStatus extends React.Component {
         {
           this.renderRemoteStream()
         }
-        {/* <div style={{position:'absolute',top:0,width:'100%',height:'100%',backgroundColor:'rgba(0,0,0,.5)'}}></div> */}
+        {
+          this.renderLnglat()
+        }
+        {/* <div className={styles.videoLarge}>
+          <video
+            ref={this.videoElem}
+            webkit-playsinline="true"
+            autoPlay
+            muted
+            playsInline
+            controls={false}
+            width={style.width}
+          >
+          </video>
+        </div> */}
       </div>
     );
   }

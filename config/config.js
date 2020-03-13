@@ -102,9 +102,9 @@ export default {
               path: '/users',
               name: 'users',
               icon: 'user',
-              component: './Welcome',
+              // component: './Users',
               routes: [
-                { path: '/users/userslist',name: 'userslist',component: './Welcome' },
+                { path: '/users/userslist',name: 'userslist',component: './Users' },
                 { path: '/users/roleslist',name: 'roleslist',component: './Welcome' },
               ],
             },

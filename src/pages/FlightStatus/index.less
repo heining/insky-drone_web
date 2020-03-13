@@ -2,12 +2,6 @@
 .flex {
   display: flex;
 }
-.amap-copyright{
-  opacity: 0 !important;
-}
-.amap-logo {
-  display: none !important
-}
 .info {
   .flex();
   font-size: 12px;
@@ -69,6 +63,9 @@
   right: 20px;
   bottom: 20px;
   z-index: 500;
+  animation: show; 
+  animation-duration: 1s;/*动画持续时间*/  
+  -webkit-animation:show 1s;/*针对webkit内核*/ 
 }
 .closer {
   display: none;
@@ -93,4 +90,25 @@
 }
 .closer:hover {
   cursor: default;
+}
+.videoLarge {
+  .flex();
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.5);
+  z-index: 151;
+}
+@keyframes show {  
+  0% {opacity: 0;}
+  30% {opacity: 0;}  
+  100% {opacity: 1;}  
+}
+@-webkit-keyframes show {
+  0% {opacity: 0;}
+  30% {opacity: 0;}  
+  100% {opacity: 1;}
 }
