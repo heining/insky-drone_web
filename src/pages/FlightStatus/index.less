@@ -7,6 +7,9 @@
   font-size: 12px;
   font-weight: 500;
   color: #ffffff;
+  animation: show; 
+  animation-duration: 1s;/*动画持续时间*/  
+  -webkit-animation:show 1s;/*针对webkit内核*/ 
 }
 .infoWin {
   .flex();
@@ -102,13 +105,17 @@
   background-color: rgba(0,0,0,.5);
   z-index: 151;
 }
+.layerSelector {
+  position: absolute;
+  right: 15px;
+}
 @keyframes show {  
   0% {opacity: 0;}
-  30% {opacity: 0;}  
+  2% {opacity: 0;}  
   100% {opacity: 1;}  
 }
 @-webkit-keyframes show {
   0% {opacity: 0;}
-  30% {opacity: 0;}  
+  2% {opacity: 0;}  
   100% {opacity: 1;}
 }

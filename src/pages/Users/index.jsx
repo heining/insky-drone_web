@@ -1,14 +1,14 @@
 export default class Users extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            
-        }
-    }
+  constructor() {
+    super();
+    this.state = {
 
-    render() {
-        return (
-            <div>test</div>
-        )
     }
+  }
+
+  render() {
+    return (
+      <div>test</div>
+    )
+  }
 }

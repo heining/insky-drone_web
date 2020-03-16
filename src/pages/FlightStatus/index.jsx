@@ -14,7 +14,8 @@ import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDeviceData, getDeviceDataId } from './service';
 import styles from './index.less'
-import MediaPlayer from './components/MediaPlayer';
+import { MediaPlayer, LayerSelecor } from './components/index';
+import LayerSelector from './components/LayerSelector';
 
 const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge']
 const colors = {
@@ -67,6 +68,7 @@ export default class FlightStatus extends React.Component {
       // viewMode: '3D',
       // pitch: 0,
       center: [121.56131744384767, 31.231298103688736],
+      mapStyle: 'amap://styles/2ed2bc686ecc697c250b97edec9518cf',
       resizeEnable: true,
       zoom: 12,
     })
@@ -81,6 +83,12 @@ export default class FlightStatus extends React.Component {
     this.scene = scene
     this.setState({
       zoom: map.getZoom()
+    })
+
+    map.on('click', (e) => {
+      if (this.infoWindow.getIsOpen()) {
+        this.infoWindow.close()
+      }
     })
 
     // 获取设备数据信息
@@ -112,7 +120,7 @@ export default class FlightStatus extends React.Component {
     let infoWindow = new AMap.InfoWindow({
       isCustom: true,  //使用自定义窗体
       // content: this.createInfoWindow(),
-      closeWhenClickMap: true,
+      // closeWhenClickMap: true,
       offset: new AMap.Pixel(0, -20),
       autoMove: true
     });
@@ -271,7 +279,8 @@ export default class FlightStatus extends React.Component {
       extData: data
     });
     AMap.event.addListener(marker, 'click', (e) => {
-      console.log(e, data)
+      // console.log(e)
+      // e.domEvent.stopPropagation()
       // that.setState({
       //   clickdeId: data.deviceId
       // })
@@ -283,23 +292,27 @@ export default class FlightStatus extends React.Component {
 
   // 改变自定义窗体的状态
   changeInfoWin(_data) {
+    const { clicked, remoteStream } = this.state
     const data = this.devices[_data.deviceId].getExtData()
     const isOpen = this.infoWindow.getIsOpen()
     const _point = new AMap.LngLat(data.gps.longitude, data.gps.latitude)
     if (isOpen) {
-      console.log(this.state.clicked.deviceId, data.deviceId)
-      if (this.state.clicked.deviceId === data.deviceId) {
+      console.log(clicked.deviceId, data.deviceId)
+      if (clicked.deviceId === data.deviceId) {
         this.infoWindow.close()
       } else {
+        this.handleLeaveRoom()
         this.infoWindow.setPosition(_point)
         this.infoWindow.setContent(this.createInfoWindow(data))
         this.setState({
           clicked: data
         })
       }
-      this.handleLeaveRoom()
+      // this.handleLeaveRoom()
     } else {
-      console.log('noOpen')
+      if (clicked.deviceId !== data.deviceId && remoteStream) {
+        this.handleLeaveRoom()
+      }
       this.infoWindow.setContent(this.createInfoWindow(data))
       this.infoWindow.open(this.map, _point)
       this.setState({
@@ -403,14 +416,14 @@ export default class FlightStatus extends React.Component {
 
   renderLnglat = () => {
     const { zoom, lng, lat } = this.state
-    return <div style={{ position: 'absolute',display:'flex', bottom: 3, left: 120, color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
+    return <div style={{ position: 'absolute', display: 'flex', bottom: 3, left: 120, color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
       {lng ?
-        <div style={{width:130}}>经度：{lng}</div> : <div></div>
+        <div style={{ width: 130 }}>经度：{lng}</div> : <div></div>
       }
       {lat ?
-        <div style={{width:130}}>纬度：{lat}</div> : <div></div>
+        <div style={{ width: 130 }}>纬度：{lat}</div> : <div></div>
       }
-      <div style={{width:100}}>缩放级别：{zoom}</div>
+      <div style={{ width: 100 }}>缩放级别：{zoom}</div>
     </div>
   }
 
@@ -424,6 +437,12 @@ export default class FlightStatus extends React.Component {
         <MediaPlayer style={{ width: 360 }} key={remoteStream.sid} client={this.client} stream={remoteStream} />
       </div>
       : <div></div>
+  }
+
+  renderLayerSelector(){
+    return (
+      <LayerSelector style={styles.layerSelector}></LayerSelector>
+    )
   }
 
   render() {
@@ -445,6 +464,9 @@ export default class FlightStatus extends React.Component {
         {
           this.renderLnglat()
         }
+        {this.renderLayerSelector()}
+        <div style={{position:'absolute'}}>
+        </div>
         {/* <div className={styles.videoLarge}>
           <video
             ref={this.videoElem}
