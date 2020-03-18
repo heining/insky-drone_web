@@ -67,8 +67,8 @@
   bottom: 20px;
   z-index: 500;
   animation: show; 
-  animation-duration: 1s;/*动画持续时间*/  
-  -webkit-animation:show 1s;/*针对webkit内核*/ 
+  animation-duration: 2s;/*动画持续时间*/  
+  -webkit-animation:show 2s;/*针对webkit内核*/ 
 }
 .closer {
   display: none;
@@ -102,7 +102,8 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,.5);
+  background-color: rgba(0,0,0,.7);
+  transition: all .5s ease 0s;
   z-index: 151;
 }
 .layerSelector {
@@ -111,11 +112,13 @@
 }
 @keyframes show {  
   0% {opacity: 0;}
-  2% {opacity: 0;}  
+  2% {opacity: 0;}
+  25% {opacity: 1;}
   100% {opacity: 1;}  
 }
 @-webkit-keyframes show {
   0% {opacity: 0;}
-  2% {opacity: 0;}  
+  2% {opacity: 0;}
+  25% {opacity: 1;}
   100% {opacity: 1;}
 }

@@ -112,7 +112,7 @@ export default {
               path: '/devices',
               name: 'devices',
               icon: 'crown',
-              component: './Admin',
+              component: './Devices',
             },
             {
               name: 'fileupload',

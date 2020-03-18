@@ -47,6 +47,7 @@ export default class FlightStatus extends React.Component {
       userId: UserId,
       isJoinedRoom: false,
       remoteStream: null,
+      enlarge: false,
       zoom: '',
       lng: '',
       lat: '',
@@ -68,8 +69,8 @@ export default class FlightStatus extends React.Component {
       // viewMode: '3D',
       // pitch: 0,
       center: [121.56131744384767, 31.231298103688736],
-      mapStyle: 'amap://styles/2ed2bc686ecc697c250b97edec9518cf',
       resizeEnable: true,
+      showIndoorMap: false,
       zoom: 12,
     })
     const scene = new Scene({
@@ -84,6 +85,11 @@ export default class FlightStatus extends React.Component {
     this.setState({
       zoom: map.getZoom()
     })
+
+    const satellite = new AMap.TileLayer.Satellite()
+    satellite.setMap(map)
+    satellite.hide()
+    this.satellite = satellite
 
     map.on('click', (e) => {
       if (this.infoWindow.getIsOpen()) {
@@ -129,8 +135,8 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    // let ws = new WebSocket('ws://172.29.18.49:8888')
-    let ws = new WebSocket('ws://localhost:8089/websocket')
+    let ws = new WebSocket('ws://172.29.18.49:8888')
+    // let ws = new WebSocket('ws://localhost:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -185,6 +191,20 @@ export default class FlightStatus extends React.Component {
       })
       console.log(map.getZoom())
     });
+  }
+
+  // 修改地图图层
+  handleChangeLayer = (v) => {
+    if (v === 'satellite') {
+      this.satellite.show()
+      this.map.setMapStyle('')
+    } else if (v === 'street') {
+      this.map.setMapStyle('')
+      this.satellite.hide()
+    } else if (v === 'night') {
+      this.map.setMapStyle('amap://styles/15ae9e43eacdbb1285bb6297d3414c44')
+      this.satellite.hide()
+    }
   }
 
   // 创建自定义信息展示窗口
@@ -428,9 +448,9 @@ export default class FlightStatus extends React.Component {
   }
 
   renderRemoteStream() {
-    const { remoteStream } = this.state;
-    return remoteStream
-      ? <div className={styles.box} onClick={(e) => { console.log('father') }}>
+    const { remoteStream, enlarge } = this.state;
+    return remoteStream && !enlarge
+      ? <div className={styles.box} onClick={(e) => { this.setState({enlarge:true}) }}>
         <div className={styles.closer} onClick={(e) => { e.stopPropagation(), this.handleLeaveRoom() }}>
           <CloseOutlined />
         </div>
@@ -439,9 +459,17 @@ export default class FlightStatus extends React.Component {
       : <div></div>
   }
 
-  renderLayerSelector(){
+  renderVideoLarge() {
+    const { remoteStream, enlarge } = this.state
+    return remoteStream && enlarge
+      ? <div className={styles.videoLarge} onClick={()=>{this.setState({enlarge:false})}}>
+        <MediaPlayer style={{ width: document.body.clientWidth * 40 / 100 }} key={remoteStream.sid} client={this.client} stream={remoteStream} />
+      </div> : <div></div>
+  }
+
+  renderLayerSelector() {
     return (
-      <LayerSelector style={styles.layerSelector}></LayerSelector>
+      <LayerSelector style={styles.layerSelector} onClick={value => this.handleChangeLayer(value)}></LayerSelector>
     )
   }
 
@@ -458,27 +486,10 @@ export default class FlightStatus extends React.Component {
             height: '100%',
           }}
         />
-        {
-          this.renderRemoteStream()
-        }
-        {
-          this.renderLnglat()
-        }
+        {this.renderRemoteStream()}
+        {this.renderLnglat()}
         {this.renderLayerSelector()}
-        <div style={{position:'absolute'}}>
-        </div>
-        {/* <div className={styles.videoLarge}>
-          <video
-            ref={this.videoElem}
-            webkit-playsinline="true"
-            autoPlay
-            muted
-            playsInline
-            controls={false}
-            width={style.width}
-          >
-          </video>
-        </div> */}
+        {this.renderVideoLarge()}
       </div>
     );
   }

@@ -1,3 +1,3 @@
 git add .
-git commit -m '飞行状态功能整体交互优化'
+git commit -m '飞行状态功能交互优化完成'
 git push origin master
