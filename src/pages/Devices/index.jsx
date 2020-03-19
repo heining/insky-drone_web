@@ -5,7 +5,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-// import { queryRule, updateRule, addRule, removeRule } from './service';
+import { getDevice } from './service';
 /**
  * 添加节点
  * @param fields
@@ -91,36 +91,32 @@ const Devices = () => {
     {
       title: 'SN码',
       dataIndex: 'sn',
-      sorter: true,
-      renderText: val => `${val} 万`,
     },
     {
       title: '设备型号',
-      dataIndex: 'status',
-      valueEnum: {
-        0: {
-          text: '关闭',
-          status: 'Default',
-        },
-        1: {
-          text: '运行中',
-          status: 'Processing',
-        },
-        2: {
-          text: '已上线',
-          status: 'Success',
-        },
-        3: {
-          text: '异常',
-          status: 'Error',
-        },
-      },
+      dataIndex: 'type',
+      // valueEnum: {
+      //   0: {
+      //     text: '关闭',
+      //     status: 'Default',
+      //   },
+      //   1: {
+      //     text: '运行中',
+      //     status: 'Processing',
+      //   },
+      //   2: {
+      //     text: '已上线',
+      //     status: 'Success',
+      //   },
+      //   3: {
+      //     text: '异常',
+      //     status: 'Error',
+      //   },
+      // },
     },
     {
       title: '机型',
-      dataIndex: 'updatedAt',
-      sorter: true,
-      valueType: 'dateTime',
+      dataIndex: 'model',
     },
     {
       title: '操作',
@@ -147,9 +143,9 @@ const Devices = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询表格"
+        headerTitle="查询设备"
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         onChange={(_, _filter, _sorter) => {
           setSorter(`${_sorter.field}_${_sorter.order}`);
         }}
@@ -199,7 +195,7 @@ const Devices = () => {
             </span>
           </div>
         )}
-        request={params => queryRule(params)}
+        request={params => getDevice(params)}
         columns={columns}
         rowSelection={{}}
       />

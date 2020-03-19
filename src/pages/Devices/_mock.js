@@ -1,3 +1,19 @@
+const createDevices = (current, pageSize) => {
+  const devices = [];
+  for (let i = 0; i < pageSize; i += 1) {
+    const index = (current - 1) * 10 + i;
+    devices.push({
+      id: parseInt(Math.random() * 100000),
+      model: `model${index}`,
+      name: `insky${index}`,
+      sn: `${parseInt(Math.random() * 100000000)}`,
+      type: `type${index}`,
+    });
+  }
+  return devices;
+};
+
+let devices = createDevices(1, 100);
 
 const deviceData = [
   {
@@ -97,6 +113,14 @@ const deviceData = [
 
 // mock device
 export default {
+  '/drone/v1/device': (req, res) => {
+    res.send({
+      code: 200,
+      data: devices,
+      message: "操作成功",
+      timestamp: new Date().valueOf()
+    })
+  },
   '/drone/v1/device/data': (req, res) => {
     res.send({
       code: 200,
@@ -105,7 +129,7 @@ export default {
       timestamp: new Date().valueOf()
     })
   },
-  'http://api.inskylab.cn/drone/v1/device/data': (req, res) => {
+  'http://api.inskylab.cn/drone/v1/device': (req, res) => {
     res.send({
       code: 200,
       data: deviceData,

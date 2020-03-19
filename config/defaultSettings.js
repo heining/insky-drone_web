@@ -4,9 +4,9 @@ export default {
   primaryColor: 'daybreak',
   layout: 'sidemenu',
   contentWidth: 'Fluid',
-  fixedHeader: false,
   autoHideHeader: false,
-  fixSiderbar: false,
+  fixedHeader: true,
+  fixSiderbar: true,
   colorWeak: false,
   menu: {
     locale: true,
