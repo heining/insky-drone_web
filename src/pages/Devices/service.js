@@ -1,9 +1,32 @@
 import request from '@/utils/request';
 
 //获取用户设备
-export async function getDevice() {
-  // return request('http://api.inskydrone.cn/drone/v1/device');
-  return request('drone/v1/device');
+export async function getDevice(params) {
+  console.log(params)
+  return request('drone/v1/device', {
+    params,
+  });
+}
+
+export async function addDevice(params) {
+  return request('drone/v1/device', {
+    method: 'POST',
+    data: { ...params, method: 'add' }
+  })
+}
+
+export async function updateDevice(params) {
+  return request('drone/v1/device', {
+    method: 'POST',
+    data: { ...params, method: 'update' }
+  })
+}
+
+export async function deleteDevice(params) {
+  return request('drone/v1/device', {
+    method: 'POST',
+    data: { ...params, method: 'delete' }
+  })
 }
 
 //通过id获取设备数据详情

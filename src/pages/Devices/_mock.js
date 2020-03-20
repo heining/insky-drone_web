@@ -111,9 +111,42 @@ const deviceData = [
   }
 ]
 
+function addDevice(req, res, u, b) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    // eslint-disable-next-line prefer-destructuring
+    url = req.url;
+  }
+  const body = (b && b.body) || req.body;
+  const { method, name, sn, type, model } = body;
+
+  const add = [body];
+  const newArr = add.concat(devices)
+
+  res.send({
+    code: 200,
+    data: newArr,
+    message: "操作成功",
+    timestamp: new Date().valueOf()
+  })
+}
+
+function updateDevice(req, res, u, b) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    // eslint-disable-next-line prefer-destructuring
+    url = req.url;
+  }
+  const body = (b && b.body) || req.body;
+  const { method, name, sn, type, model } = body;
+
+  const add = [body];
+  const newArr = add.concat(devices)
+}
+
 // mock device
 export default {
-  '/drone/v1/device': (req, res) => {
+  'GET /drone/v1/device': (req, res) => {
     res.send({
       code: 200,
       data: devices,
@@ -121,6 +154,7 @@ export default {
       timestamp: new Date().valueOf()
     })
   },
+  'POST /drone/v1/device': addDevice,
   '/drone/v1/device/data': (req, res) => {
     res.send({
       code: 200,

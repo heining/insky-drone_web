@@ -1,11 +1,11 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
-import { getDevice } from './service';
+import AddDevice from './components/AddDevice';
+import UpdateDevice from './components/UpdateDevice';
+import { getDevice, addDevice, updateDevice } from './service';
 /**
  * 添加节点
  * @param fields
@@ -13,11 +13,9 @@ import { getDevice } from './service';
 
 const handleAdd = async fields => {
   const hide = message.loading('正在添加');
-
   try {
-    await addRule({
-      desc: fields.desc,
-    });
+    const res = await addDevice(fields)
+    console.log(res)
     hide();
     message.success('添加成功');
     return true;
@@ -33,20 +31,16 @@ const handleAdd = async fields => {
  */
 
 const handleUpdate = async fields => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('正在修改');
 
   try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
+    await updateDevice(fields);
     hide();
-    message.success('配置成功');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('修改失败请重试！');
     return false;
   }
 };
@@ -75,9 +69,9 @@ const handleRemove = async selectedRows => {
 
 const Devices = () => {
   const [sorter, setSorter] = useState({});
-  const [createModalVisible, handleModalVisible] = useState(false);
+  const [AddModalVisible, handleAddModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+  const [deviceData, setDeviceData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
@@ -127,13 +121,20 @@ const Devices = () => {
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              setDeviceData(record);
             }}
           >
-            配置
+            修改
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <Popconfirm
+            title="确定删除该设备吗？"
+            // onConfirm={confirm}
+            okText="确认"
+            cancelText="取消"
+          >
+            <a href="">删除</a>
+          </Popconfirm>
         </>
       ),
     },
@@ -153,7 +154,7 @@ const Devices = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="primary" onClick={() => handleAddModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
           selectedRows && selectedRows.length > 0 && (
@@ -190,39 +191,39 @@ const Devices = () => {
               {selectedRowKeys.length}
             </a>{' '}
             项&nbsp;&nbsp;
-            <span>
+            {/* <span>
               服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
-            </span>
+            </span> */}
           </div>
         )}
-        request={params => getDevice(params)}
+        request={params => getDevice({
+          limit: params.pageSize,
+          page: params.current,
+          sort: params.sorter
+        })}
         columns={columns}
         rowSelection={{}}
       />
-      <CreateForm
+      <AddDevice
         onSubmit={async value => {
           const success = await handleAdd(value);
-
           if (success) {
-            handleModalVisible(false);
-
+            handleAddModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
-        onCancel={() => handleModalVisible(false)}
-        modalVisible={createModalVisible}
+        onCancel={() => handleAddModalVisible(false)}
+        modalVisible={AddModalVisible}
       />
-      {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
+      {deviceData && Object.keys(deviceData).length ? (
+        <UpdateDevice
           onSubmit={async value => {
             const success = await handleUpdate(value);
-
             if (success) {
-              handleModalVisible(false);
-              setStepFormValues({});
-
+              handleUpdateModalVisible(falste);
+              setDeviceData({});
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -230,10 +231,10 @@ const Devices = () => {
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setStepFormValues({});
+            setDeviceData({});
           }}
           updateModalVisible={updateModalVisible}
-          values={stepFormValues}
+          values={deviceData}
         />
       ) : null}
     </PageHeaderWrapper>

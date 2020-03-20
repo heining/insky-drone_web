@@ -397,7 +397,6 @@ export default class FlightStatus extends React.Component {
   }
   // 离开画面房间
   handleLeaveRoom() {
-    console.log(this)
     const { isJoinedRoom } = this.state;
     if (!isJoinedRoom) {
       return;

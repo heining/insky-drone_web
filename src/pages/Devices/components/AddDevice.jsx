@@ -1,0 +1,105 @@
+import React from 'react';
+import { Form, Input, Modal } from 'antd';
+const FormItem = Form.Item;
+
+const AddDevice = props => {
+  const [form] = Form.useForm();
+  const { modalVisible, onSubmit: handleAdd, onCancel } = props;
+
+  const okHandle = async () => {
+    const fieldsValue = await form.validateFields();
+    form.resetFields();
+    handleAdd(fieldsValue);
+  };
+
+  return (
+    <Modal
+      destroyOnClose
+      title="添加设备"
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => onCancel()}
+    >
+      <Form form={form}>
+        <FormItem
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 15,
+          }}
+          label="设备昵称"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: '请输入至少五个字符的规则描述！',
+              min: 5,
+            },
+          ]}
+        >
+          <Input placeholder="请输入" />
+        </FormItem>
+        <FormItem
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 15,
+          }}
+          label="SN码"
+          name="sn"
+          rules={[
+            {
+              required: true,
+              message: '请输入至少五个字符的规则描述！',
+              min: 5,
+            },
+          ]}
+        >
+          <Input placeholder="请输入" />
+        </FormItem>
+        <FormItem
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 15,
+          }}
+          label="设备型号"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: '请输入至少五个字符的规则描述！',
+              min: 5,
+            },
+          ]}
+        >
+          <Input placeholder="请输入" />
+        </FormItem>
+        <FormItem
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 15,
+          }}
+          label="机型"
+          name="model"
+          rules={[
+            {
+              required: true,
+              message: '请输入至少五个字符的规则描述！',
+              min: 5,
+            },
+          ]}
+        >
+          <Input placeholder="请输入" />
+        </FormItem>
+      </Form>
+    </Modal>
+  );
+};
+
+export default AddDevice;
