@@ -1,4 +1,5 @@
 export default {
+  'menu.login': 'Sign In',
   'menu.users': 'User Management',
   'menu.users.userslist': 'User List',
   'menu.users.roleslist': 'Role List',

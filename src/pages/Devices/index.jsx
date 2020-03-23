@@ -5,7 +5,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import AddDevice from './components/AddDevice';
 import UpdateDevice from './components/UpdateDevice';
-import { getDevice, addDevice, updateDevice } from './service';
+import { getDevice, addDevice, updateDevice, deleteDevice } from './service';
 /**
  * 添加节点
  * @param fields
@@ -49,18 +49,19 @@ const handleUpdate = async fields => {
  * @param selectedRows
  */
 
-const handleRemove = async selectedRows => {
+const handleRemove = async fields => {
+
   const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
 
   try {
-    await removeRule({
-      key: selectedRows.map(row => row.key),
+    await deleteDevice({
+      key: fields.id,
     });
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('删除成功');
     return true;
   } catch (error) {
+    console.log(error)
     hide();
     message.error('删除失败，请重试');
     return false;
@@ -129,7 +130,7 @@ const Devices = () => {
           <Divider type="vertical" />
           <Popconfirm
             title="确定删除该设备吗？"
-            // onConfirm={confirm}
+            onConfirm={() => handleRemove(record)}
             okText="确认"
             cancelText="取消"
           >
@@ -222,7 +223,7 @@ const Devices = () => {
           onSubmit={async value => {
             const success = await handleUpdate(value);
             if (success) {
-              handleUpdateModalVisible(falste);
+              handleUpdateModalVisible(false);
               setDeviceData({});
               if (actionRef.current) {
                 actionRef.current.reload();

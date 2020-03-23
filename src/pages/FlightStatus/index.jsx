@@ -14,8 +14,7 @@ import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDeviceData, getDeviceDataId } from './service';
 import styles from './index.less'
-import { MediaPlayer, LayerSelecor } from './components/index';
-import LayerSelector from './components/LayerSelector';
+import { MediaPlayer, LayerSelector } from './components/index';
 
 const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge']
 const colors = {
@@ -35,7 +34,7 @@ const colors = {
 }
 const AppId = 'urtc-pynapzli'
 const AppKey = '384d6fc6b005a8d2897f6225c18f30c9'
-const UserId = 'afnyhnizq9l4l9ev_camera3'
+const UserId = 'afnyhnizq9l4l9ev_camera3008'
 // const RoomId = '123'
 
 export default class FlightStatus extends React.Component {
@@ -135,8 +134,8 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    let ws = new WebSocket('ws://172.29.18.49:8888')
-    // let ws = new WebSocket('ws://localhost:8089/websocket')
+    // let ws = new WebSocket('ws://172.29.18.49:8888')
+    let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -147,7 +146,8 @@ export default class FlightStatus extends React.Component {
       // 返回[]和{}做区分
       try {
         const point = JSON.parse(e.data)
-        // console.log(point.gps.longitude, point.gps.latitude)
+        console.log(point)
+        console.log(point.gps.longitude, point.gps.latitude)
         const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
         points[point.deviceId].push(_point)
         devices[point.deviceId].setPosition(_point)
@@ -224,7 +224,7 @@ export default class FlightStatus extends React.Component {
     middle.className = styles.middle
     const middle_l = document.createElement('div')
     middle_l.className = styles.middle_l
-    middle_l.innerHTML = `地面速度：${'25m/s'}</br>爬升速度：${'3m/s'}</br>姿态角：${'3m/s'}`
+    middle_l.innerHTML = `地面速度：${data.speed.groundSpeed}</br>爬升速度：${data.speed.climbSpeed}</br>姿态角：${data.gps.altitude}`
     const middle_r = document.createElement('div')
     middle_r.className = styles.middle_r
     middle_r.innerHTML = `经度：${data.gps.longitude}</br>纬度：${data.gps.latitude}</br>电量：${data.battery.current}%`

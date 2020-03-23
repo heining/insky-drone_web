@@ -2,7 +2,6 @@ import request from '@/utils/request';
 
 //获取用户设备
 export async function getDevice(params) {
-  console.log(params)
   return request('drone/v1/device', {
     params,
   });
@@ -17,19 +16,19 @@ export async function addDevice(params) {
 
 export async function updateDevice(params) {
   return request('drone/v1/device', {
-    method: 'POST',
+    method: 'PUT',
     data: { ...params, method: 'update' }
   })
 }
 
 export async function deleteDevice(params) {
-  return request('drone/v1/device', {
-    method: 'POST',
-    data: { ...params, method: 'delete' }
+  console.log(params)
+  return request(`drone/v1/device/${params}`, {
+    method: 'DELETE',
   })
 }
 
 //通过id获取设备数据详情
 export async function getDeviceDataId() {
-  return request('http://api.inskylab.cn/drone/v1/device/data');
+  return request('http://122.51.223.137:8089/drone/v1/device');
 }

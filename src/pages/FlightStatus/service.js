@@ -7,5 +7,5 @@ export async function getDeviceData() {
 
 //通过id获取设备数据详情
 export async function getDeviceDataId() {
-  return request('http://api.inskylab.cn/drone/v1/device/data');
+  return request('http://api.inskylab.cn/api/v1/device');
 }

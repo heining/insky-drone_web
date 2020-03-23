@@ -67,6 +67,7 @@ if (isAntDesignProPreview) {
 }
 
 export default {
+  // base: 'http://api.inskylab.cn/api',
   plugins,
   hash: true,
   targets: {
@@ -181,11 +182,11 @@ export default {
   manifest: {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
-  proxy: {
-    '/drone/v1/': {
-      target: 'http://api.inskydrone.cn/drone/v1/',
-      changeOrigin: true,
-      pathRewrite: { '^/drone/v1/': '' },
-    },
-  },
+  // proxy: {
+  //   '/drone/v1/': {
+  //     target: 'http://api.inskydrone.cn/drone/v1/',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/drone/v1/': '' },
+  //   },
+  // },
 };

@@ -1,4 +1,5 @@
 export default {
+  'menu.login': '登录',
   'menu.users': '用户管理',
   'menu.users.userslist': '用户列表',
   'menu.users.roleslist': '角色列表',
