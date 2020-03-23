@@ -134,8 +134,8 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    // let ws = new WebSocket('ws://172.29.18.49:8888')
-    let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
+    let ws = new WebSocket('ws://localhost:8888')
+    // let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {

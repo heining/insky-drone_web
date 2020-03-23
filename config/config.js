@@ -183,10 +183,10 @@ export default {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
   // proxy: {
-  //   '/drone/v1/': {
-  //     target: 'http://api.inskydrone.cn/drone/v1/',
+  //   '/api/v1/': {
+  //     target: 'http://122.51.223.137:8089/api/v1/',
   //     changeOrigin: true,
-  //     pathRewrite: { '^/drone/v1/': '' },
+  //     pathRewrite: { '^/api/v1/': '' },
   //   },
   // },
 };
