@@ -5,7 +5,8 @@ import React from 'react';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { connect } from 'dva';
 import SelectLang from '@/components/SelectLang';
-import logo from '../assets/logo.svg';
+import logo from '../assets/insky.svg';
+// import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
 
 const UserLayout = props => {
@@ -36,20 +37,24 @@ const UserLayout = props => {
       </Helmet>
 
       <div className={styles.container}>
-        <div className={styles.lang}>
+        {/* <div className={styles.lang}>
           <SelectLang />
-        </div>
+        </div> */}
         <div className={styles.content}>
-          <div className={styles.top}>
-            <div className={styles.header}>
-              <Link to="/">
+          <div className={styles.card}>
+            <div className={styles.cardL}>
+              <div className={styles.logo}>
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
-              </Link>
+              </div>
+              <video className={styles.video} muted loop autoPlay playsInline>
+                <source src={require('../assets/normalvideo.mp4')} />
+              </video>
+              <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, overflow: 'hidden' }}></div>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.cardR}>
+              {children}
+            </div>
           </div>
-          {children}
         </div>
         <DefaultFooter />
       </div>

@@ -146,7 +146,7 @@ function updateDevice(req, res, u, b) {
 
 // mock device
 export default {
-  'GET /drone/v1/device': (req, res) => {
+  '/api/v1/device': (req, res) => {
     res.send({
       code: 200,
       data: devices,
@@ -154,8 +154,8 @@ export default {
       timestamp: new Date().valueOf()
     })
   },
-  'POST /drone/v1/device': addDevice,
-  '/drone/v1/device/data': (req, res) => {
+  'POST /api/v1/device': addDevice,
+  '/api/v1/device/data': (req, res) => {
     res.send({
       code: 200,
       data: deviceData,

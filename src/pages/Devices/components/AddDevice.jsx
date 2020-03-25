@@ -33,8 +33,7 @@ const AddDevice = props => {
           rules={[
             {
               required: true,
-              message: '请输入至少五个字符的规则描述！',
-              min: 5,
+              message: '请输入设备昵称！',
             },
           ]}
         >
@@ -52,8 +51,7 @@ const AddDevice = props => {
           rules={[
             {
               required: true,
-              message: '请输入至少五个字符的规则描述！',
-              min: 5,
+              message: '请输入SN码！',
             },
           ]}
         >
@@ -71,8 +69,7 @@ const AddDevice = props => {
           rules={[
             {
               required: true,
-              message: '请输入至少五个字符的规则描述！',
-              min: 5,
+              message: '请输入设备型号！',
             },
           ]}
         >
@@ -90,8 +87,7 @@ const AddDevice = props => {
           rules={[
             {
               required: true,
-              message: '请输入至少五个字符的规则描述！',
-              min: 5,
+              message: '请输入机型！',
             },
           ]}
         >

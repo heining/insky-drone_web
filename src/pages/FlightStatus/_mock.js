@@ -1,7 +1,7 @@
 
 const deviceData = [
   {
-    "deviceId": 'insky760001',
+    "deviceId": 'insky760002',
     "battery": {
       "voltage": 100,
       "current": 88,
@@ -97,7 +97,7 @@ const deviceData = [
 
 // mock device
 export default {
-  '/drone/v1/device/data': (req, res) => {
+  '/api/v1/device/data': (req, res) => {
     res.send({
       code: 200,
       data: deviceData,

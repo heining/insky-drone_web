@@ -32,7 +32,7 @@ const handleAdd = async fields => {
 
 const handleUpdate = async fields => {
   const hide = message.loading('正在修改');
-
+  console.log(fields)
   try {
     await updateDevice(fields);
     hide();
@@ -49,16 +49,17 @@ const handleUpdate = async fields => {
  * @param selectedRows
  */
 
-const handleRemove = async fields => {
+const handleRemove = async (fields,actionRef) => {
 
   const hide = message.loading('正在删除');
 
   try {
-    await deleteDevice({
-      key: fields.id,
-    });
+    await deleteDevice(fields.id);
     hide();
     message.success('删除成功');
+    if (actionRef.current) {
+      actionRef.current.reload();
+    }
     return true;
   } catch (error) {
     console.log(error)
@@ -130,7 +131,7 @@ const Devices = () => {
           <Divider type="vertical" />
           <Popconfirm
             title="确定删除该设备吗？"
-            onConfirm={() => handleRemove(record)}
+            onConfirm={() => handleRemove(record,actionRef)}
             okText="确认"
             cancelText="取消"
           >
@@ -221,6 +222,7 @@ const Devices = () => {
       {deviceData && Object.keys(deviceData).length ? (
         <UpdateDevice
           onSubmit={async value => {
+            console.log(value)
             const success = await handleUpdate(value);
             if (success) {
               handleUpdateModalVisible(false);

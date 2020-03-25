@@ -76,13 +76,13 @@ export default {
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
-      path: '/user',
+      path: '/login',
       component: '../layouts/UserLayout',
       routes: [
         {
           name: 'login',
-          path: '/user/login',
-          component: './user/login',
+          path: '/login',
+          component: './Login',
         },
       ],
     },
@@ -182,11 +182,11 @@ export default {
   manifest: {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
-  // proxy: {
-  //   '/api/v1/': {
-  //     target: 'http://122.51.223.137:8089/api/v1/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/api/v1/': '' },
-  //   },
-  // },
+  proxy: {
+    '/drone/': {
+      target: 'https://api.inskydrone.cn/drone/',
+      changeOrigin: true,
+      pathRewrite: { '^/drone/': '' },
+    },
+  },
 };

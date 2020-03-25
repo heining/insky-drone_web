@@ -28,7 +28,7 @@ const UpdateDevice = props => {
 
   const okHandle = async () => {
     const fieldsValue = await form.validateFields();
-    setDeviceVals({ ...deviceVals, ...fieldsValue });
+    setDeviceVals({ ...deviceVals });
     handleUpdate(deviceVals);
   };
 
@@ -92,8 +92,8 @@ const UpdateDevice = props => {
       <>
         <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
         <Button type="primary" onClick={() => okHandle()}>
-          完成
-          </Button>
+          确认
+        </Button>
       </>
     );
   };
@@ -117,9 +117,11 @@ const UpdateDevice = props => {
         initialValues={{
           name: deviceVals.name,
           sn: deviceVals.sn,
+          id: deviceVals.id,
           type: deviceVals.type,
           model: deviceVals.model,
         }}
+        onValuesChange={(_, allValues) => setDeviceVals(allValues)}
       >
         {renderContent()}
       </Form>
