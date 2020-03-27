@@ -1,7 +1,7 @@
 
 const deviceData = [
   {
-    "deviceId": 'insky760002',
+    "deviceId": 'insky760001',
     "battery": {
       "voltage": 100,
       "current": 88,
@@ -32,15 +32,15 @@ const deviceData = [
     "timestamp": new Date().valueOf()
   },
   {
-    "deviceId": '10001',
+    "deviceId": 'insky760002',
     "battery": {
       "voltage": 100,
       "current": 36,
       "remaining": 20
     },
     "gps": {
-      "latitude": 31.23269254528419,
-      "longitude": 121.51445388793944,
+      "latitude": 31.205496352552,
+      "longitude": 121.60260023525,
       "altitude": 0
     },
     "speed": {
@@ -62,37 +62,6 @@ const deviceData = [
     "mavlink": "",
     "timestamp": new Date().valueOf()
   },
-  {
-    "deviceId": '10003',
-    "battery": {
-      "voltage": 100,
-      "current": 62,
-      "remaining": 20
-    },
-    "gps": {
-      "latitude": 31.19004268466931,
-      "longitude": 121.578311920166,
-      "altitude": 0
-    },
-    "speed": {
-      "groundSpeed": 0,  //地面速度
-      "climbSpeed": 0   //爬升速度             
-    },
-    "attitude": {
-      "roll": 0,
-      "pitch": 0,
-      "yaw": 0
-    },
-    "status": {
-      "connected": false,
-      "armed": false,
-      "manualInput": false,
-      "mode": "drone",
-      "systemStatus": false
-    },
-    "mavlink": "",
-    "timestamp": new Date().valueOf()
-  }
 ]
 
 // mock device

@@ -12,6 +12,7 @@ import { Descriptions, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
+import { GPS } from '@/utils/gpstogd'
 import { getDeviceData, getDeviceDataId } from './service';
 import styles from './index.less'
 import { MediaPlayer, LayerSelector } from './components/index';
@@ -293,7 +294,7 @@ export default class FlightStatus extends React.Component {
       imageSize: new AMap.Size(28, 28)
     });
     let marker = new AMap.Marker({
-      position: new AMap.LngLat(lng, lat),
+      position: GPS.gcj_encrypt(lat,lng),
       offset: new AMap.Pixel(-14, -14),
       icon: icon,
       extData: data
@@ -449,7 +450,7 @@ export default class FlightStatus extends React.Component {
   renderRemoteStream() {
     const { remoteStream, enlarge } = this.state;
     return remoteStream && !enlarge
-      ? <div className={styles.box} onClick={(e) => { this.setState({enlarge:true}) }}>
+      ? <div className={styles.box} onClick={(e) => { this.setState({ enlarge: true }) }}>
         <div className={styles.closer} onClick={(e) => { e.stopPropagation(), this.handleLeaveRoom() }}>
           <CloseOutlined />
         </div>
@@ -461,7 +462,7 @@ export default class FlightStatus extends React.Component {
   renderVideoLarge() {
     const { remoteStream, enlarge } = this.state
     return remoteStream && enlarge
-      ? <div className={styles.videoLarge} onClick={()=>{this.setState({enlarge:false})}}>
+      ? <div className={styles.videoLarge} onClick={() => { this.setState({ enlarge: false }) }}>
         <MediaPlayer style={{ width: document.body.clientWidth * 40 / 100 }} key={remoteStream.sid} client={this.client} stream={remoteStream} />
       </div> : <div></div>
   }

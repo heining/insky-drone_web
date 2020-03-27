@@ -31,11 +31,11 @@ const plugins = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -69,7 +69,8 @@ if (isAntDesignProPreview) {
 export default {
   // base: 'http://api.inskylab.cn/api',
   plugins,
-  hash: true,
+  // hash: true,
+  history:'hash',
   targets: {
     ie: 11,
   },
@@ -100,32 +101,46 @@ export default {
               redirect: '/flightstatus',
             },
             {
-              path: '/users',
-              name: 'users',
-              icon: 'user',
-              // component: './Users',
-              routes: [
-                { path: '/users/userslist',name: 'userslist',component: './Users' },
-                { path: '/users/roleslist',name: 'roleslist',component: './Welcome' },
-              ],
+              name: 'flightstatus',
+              icon: 'global',
+              path: '/flightstatus',
+              component: './FlightStatus',
             },
             {
-              path: '/devices',
-              name: 'devices',
+              path: '/resources',
+              name: 'resources',
               icon: 'crown',
-              component: './Devices',
+              // component: './Resources',
+              routes: [
+                {
+                  path: '/resources/devices',
+                  name: 'devices',
+                  icon: 'crown',
+                  // component: './Devices',
+                  routes: [
+                    { path: '/resources/devices/aircrafts', name: 'aircrafts', component: './Devices' },
+                    { path: '/resources/devices/aircraftsbox', name: 'aircraftsbox', component: './Welcome' },
+                    { path: '/resources/devices/cameras', name: 'cameras', component: './Welcome' },
+                    { path: '/resources/devices/remotecontrol', name: 'remotecontrol', component: './Welcome' },
+                  ],
+                },
+                {
+                  path: '/resources/personnel',
+                  name: 'personnel',
+                  icon: 'user',
+                  // component: './Users',
+                  routes: [
+                    { path: '/resources/personnel/users', name: 'users', component: './Welcome' },
+                    { path: '/resources/personnel/pilots', name: 'pilots', component: './Welcome' },
+                  ],
+                },
+              ]
             },
             {
               name: 'fileupload',
               icon: 'file-add',
               path: '/fileupload',
-              component: './ListTableList',
-            },
-            {
-              name: 'flightstatus',
-              icon: 'global',
-              path: '/flightstatus',
-              component: './FlightStatus',
+              component: './Welcome',
             },
             {
               component: './404',

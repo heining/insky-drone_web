@@ -14,4 +14,5 @@ export default {
   title: '用心联接空间',
   pwa: false,
   iconfontUrl: '',
+  collapsed: false
 };
