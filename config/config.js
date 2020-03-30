@@ -70,7 +70,8 @@ export default {
   // base: 'http://api.inskylab.cn/api',
   plugins,
   // hash: true,
-  history:'hash',
+  history: 'hash',
+  publicPath: "https://lesuidao.cn/dist/",
   targets: {
     ie: 11,
   },
@@ -202,6 +203,7 @@ export default {
       target: 'https://api.inskydrone.cn/drone/',
       changeOrigin: true,
       pathRewrite: { '^/drone/': '' },
+      secure: false
     },
   },
 };

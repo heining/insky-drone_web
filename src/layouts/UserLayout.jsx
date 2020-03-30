@@ -56,7 +56,23 @@ const UserLayout = props => {
             </div>
           </div>
         </div>
-        <DefaultFooter />
+        <DefaultFooter
+          copyright="2019 狮尾智能技术出品"
+          links={[
+            // {
+            //   key: 'Ant Design Pro',
+            //   title: 'Ant Design Pro',
+            //   href: 'https://pro.ant.design',
+            //   blankTarget: true,
+            // },
+            // {
+            //   key: 'Ant Design',
+            //   title: 'Ant Design',
+            //   href: 'https://ant.design',
+            //   blankTarget: true,
+            // },
+          ]}
+        />
       </div>
     </>
   );

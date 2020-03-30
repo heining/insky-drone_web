@@ -68,10 +68,10 @@ export default class FlightStatus extends React.Component {
     const map = new AMap.Map('map', {
       // viewMode: '3D',
       // pitch: 0,
-      center: [121.56131744384767, 31.231298103688736],
+      center: [113.57131744384767, 22.271298103688736],
       resizeEnable: true,
       showIndoorMap: false,
-      zoom: 12,
+      zoom: 8,
     })
     const scene = new Scene({
       id: 'map',
@@ -101,6 +101,70 @@ export default class FlightStatus extends React.Component {
     const res = await getDeviceData()
     if (res.status) return
     const data = res.data
+    // const data = [
+    //   {
+    //     "deviceId": 'insky760001',
+    //     "battery": {
+    //       "voltage": 100,
+    //       "current": 88,
+    //       "remaining": 20
+    //     },
+    //     "gps": {
+    //       "latitude": 31.231298103688736,
+    //       "longitude": 121.56131744384767,
+    //       "altitude": 0
+    //     },
+    //     "speed": {
+    //       "groundSpeed": 0,  //地面速度
+    //       "climbSpeed": 0   //爬升速度             
+    //     },
+    //     "attitude": {
+    //       "roll": 0,
+    //       "pitch": 0,
+    //       "yaw": 0
+    //     },
+    //     "status": {
+    //       "connected": false,
+    //       "armed": false,
+    //       "manualInput": false,
+    //       "mode": "drone",
+    //       "systemStatus": false
+    //     },
+    //     "mavlink": "",
+    //     "timestamp": new Date().valueOf()
+    //   },
+    //   {
+    //     "deviceId": 'insky760002',
+    //     "battery": {
+    //       "voltage": 100,
+    //       "current": 36,
+    //       "remaining": 20
+    //     },
+    //     "gps": {
+    //       "latitude": 31.205496352552,
+    //       "longitude": 121.60260023525,
+    //       "altitude": 0
+    //     },
+    //     "speed": {
+    //       "groundSpeed": 0,  //地面速度
+    //       "climbSpeed": 0   //爬升速度             
+    //     },
+    //     "attitude": {
+    //       "roll": 0,
+    //       "pitch": 0,
+    //       "yaw": 0
+    //     },
+    //     "status": {
+    //       "connected": false,
+    //       "armed": false,
+    //       "manualInput": false,
+    //       "mode": "drone",
+    //       "systemStatus": false
+    //     },
+    //     "mavlink": "",
+    //     "timestamp": new Date().valueOf()
+    //   },
+    // ]
     console.log(data)
 
     // 初始化设备信息、轨迹
@@ -136,6 +200,7 @@ export default class FlightStatus extends React.Component {
 
     // 新建websocket连接
     // let ws = new WebSocket('ws://localhost:8888')
+    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
     let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
@@ -149,7 +214,8 @@ export default class FlightStatus extends React.Component {
         const point = JSON.parse(e.data)
         console.log(point)
         console.log(point.gps.longitude, point.gps.latitude)
-        const _point = new AMap.LngLat(point.gps.longitude, point.gps.latitude)
+        const lnglat = GPS.gcj_encrypt(point.gps.latitude, point.gps.longitude)
+        const _point = new AMap.LngLat(lnglat[0],lnglat[1])
         points[point.deviceId].push(_point)
         devices[point.deviceId].setPosition(_point)
         devices[point.deviceId].setExtData(point)
@@ -294,7 +360,7 @@ export default class FlightStatus extends React.Component {
       imageSize: new AMap.Size(28, 28)
     });
     let marker = new AMap.Marker({
-      position: GPS.gcj_encrypt(lat,lng),
+      position: GPS.gcj_encrypt(lat, lng),
       offset: new AMap.Pixel(-14, -14),
       icon: icon,
       extData: data
@@ -316,7 +382,8 @@ export default class FlightStatus extends React.Component {
     const { clicked, remoteStream } = this.state
     const data = this.devices[_data.deviceId].getExtData()
     const isOpen = this.infoWindow.getIsOpen()
-    const _point = new AMap.LngLat(data.gps.longitude, data.gps.latitude)
+    const lnglat = GPS.gcj_encrypt(data.gps.latitude, data.gps.longitude)
+    const _point = new AMap.LngLat(lnglat[0], lnglat[1])
     if (isOpen) {
       console.log(clicked.deviceId, data.deviceId)
       if (clicked.deviceId === data.deviceId) {
@@ -436,7 +503,7 @@ export default class FlightStatus extends React.Component {
 
   renderLnglat = () => {
     const { zoom, lng, lat } = this.state
-    return <div style={{ position: 'absolute', display: 'flex', bottom: 3, left: 120, color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
+    return <div style={{ position: 'absolute', display: 'flex', bottom: 3, left: '16%', color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
       {lng ?
         <div style={{ width: 130 }}>经度：{lng}</div> : <div></div>
       }

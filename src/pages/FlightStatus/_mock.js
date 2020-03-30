@@ -8,8 +8,8 @@ const deviceData = [
       "remaining": 20
     },
     "gps": {
-      "latitude": 31.231298103688736,
-      "longitude": 121.56131744384767,
+      "latitude": 22.271298103688736,
+      "longitude": 113.57131744384767,
       "altitude": 0
     },
     "speed": {

@@ -157,7 +157,7 @@ const Devices = () => {
         }}
         toolBarRender={(action, { selectedRows }) => [
           <Button type="primary" onClick={() => handleAddModalVisible(true)}>
-            <PlusOutlined /> 新建
+            <PlusOutlined /> 添加
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
