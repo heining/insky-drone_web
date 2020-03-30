@@ -111,13 +111,11 @@ export default {
               path: '/resources',
               name: 'resources',
               icon: 'crown',
-              // component: './Resources',
               routes: [
                 {
                   path: '/resources/devices',
                   name: 'devices',
                   icon: 'crown',
-                  // component: './Devices',
                   routes: [
                     { path: '/resources/devices/aircrafts', name: 'aircrafts', component: './Devices' },
                     { path: '/resources/devices/aircraftsbox', name: 'aircraftsbox', component: './Welcome' },
@@ -129,7 +127,6 @@ export default {
                   path: '/resources/personnel',
                   name: 'personnel',
                   icon: 'user',
-                  // component: './Users',
                   routes: [
                     { path: '/resources/personnel/users', name: 'users', component: './Welcome' },
                     { path: '/resources/personnel/pilots', name: 'pilots', component: './Welcome' },
@@ -138,10 +135,34 @@ export default {
               ]
             },
             {
-              name: 'fileupload',
+              name: 'dataserver',
               icon: 'file-add',
-              path: '/fileupload',
-              component: './Welcome',
+              path: '/dataserver',
+              routes: [
+                { path: '/dataserver/fileupload', name: 'fileupload', component: './Welcome' },
+              ],
+            },
+            {
+              name: 'flightplan',
+              icon: 'file-add',
+              path: '/flightplan',
+              routes: [
+                {
+                  path: '/flightplan/planapplication',
+                  name: 'planapplication',
+                  routes: [
+                    { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
+                    { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
+                  ]
+                },
+                {
+                  path: '/flightplan/command',
+                  name: 'command',
+                  routes: [
+                    { path: '/flightplan/command/airlineplan', name: 'airlineplan', component: './Welcome' },
+                  ]
+                },
+              ],
             },
             {
               component: './404',
