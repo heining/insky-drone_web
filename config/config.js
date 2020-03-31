@@ -128,7 +128,7 @@ export default {
                   name: 'personnel',
                   icon: 'user',
                   routes: [
-                    { path: '/resources/personnel/users', name: 'users', component: './Welcome' },
+                    { path: '/resources/personnel/users', name: 'users', component: './Users' },
                     { path: '/resources/personnel/pilots', name: 'pilots', component: './Welcome' },
                   ],
                 },
@@ -142,28 +142,28 @@ export default {
                 { path: '/dataserver/fileupload', name: 'fileupload', component: './Welcome' },
               ],
             },
-            {
-              name: 'flightplan',
-              icon: 'file-add',
-              path: '/flightplan',
-              routes: [
-                {
-                  path: '/flightplan/planapplication',
-                  name: 'planapplication',
-                  routes: [
-                    { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
-                    { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
-                  ]
-                },
-                {
-                  path: '/flightplan/command',
-                  name: 'command',
-                  routes: [
-                    { path: '/flightplan/command/airlineplan', name: 'airlineplan', component: './Welcome' },
-                  ]
-                },
-              ],
-            },
+            // {
+            //   name: 'flightplan',
+            //   icon: 'file-add',
+            //   path: '/flightplan',
+            //   routes: [
+            //     {
+            //       path: '/flightplan/planapplication',
+            //       name: 'planapplication',
+            //       routes: [
+            //         { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
+            //         { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
+            //       ]
+            //     },
+            //     {
+            //       path: '/flightplan/command',
+            //       name: 'command',
+            //       routes: [
+            //         { path: '/flightplan/command/airlineplan', name: 'airlineplan', component: './Welcome' },
+            //       ]
+            //     },
+            //   ],
+            // },
             {
               component: './404',
             },
