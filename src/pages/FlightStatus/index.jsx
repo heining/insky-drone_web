@@ -97,6 +97,25 @@ export default class FlightStatus extends React.Component {
       }
     })
 
+    const geoJSON = require('../../assets/test.json')
+    // 禁飞区
+    const geojson = new AMap.GeoJSON({
+      geoJSON: geoJSON,
+      // 还可以自定义getMarker和getPolyline
+      getPolygon: function (geojson, lnglats) {
+        // 计算面积
+        var area = AMap.GeometryUtil.ringArea(lnglats[0])
+
+        return new AMap.Polygon({
+          path: lnglats,
+          fillOpacity: 1 - Math.sqrt(area / 8000000000),// 面积越大透明度越高
+          strokeColor: 'white',
+          fillColor: 'red'
+        });
+      }
+    });
+    geojson.setMap(map)
+
     // 获取设备数据信息
     const res = await getDeviceData()
     if (res.status) return
@@ -215,7 +234,7 @@ export default class FlightStatus extends React.Component {
         console.log(point)
         console.log(point.gps.longitude, point.gps.latitude)
         const lnglat = GPS.gcj_encrypt(point.gps.latitude, point.gps.longitude)
-        const _point = new AMap.LngLat(lnglat[0],lnglat[1])
+        const _point = new AMap.LngLat(lnglat[0], lnglat[1])
         points[point.deviceId].push(_point)
         devices[point.deviceId].setPosition(_point)
         devices[point.deviceId].setExtData(point)
