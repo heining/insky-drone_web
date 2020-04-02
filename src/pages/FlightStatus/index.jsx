@@ -97,24 +97,37 @@ export default class FlightStatus extends React.Component {
       }
     })
 
-    const geoJSON = require('../../assets/test.json')
+    const geoJSON_xzm = require('../../assets/airport_xzm.json')
+    const geoJSON_jkq = require('../../assets/airport_jkq.json')
     // 禁飞区
-    const geojson = new AMap.GeoJSON({
-      geoJSON: geoJSON,
+    const geojson_xzm = new AMap.GeoJSON({
+      geoJSON: geoJSON_xzm,
       // 还可以自定义getMarker和getPolyline
       getPolygon: function (geojson, lnglats) {
-        // 计算面积
-        var area = AMap.GeometryUtil.ringArea(lnglats[0])
-
         return new AMap.Polygon({
           path: lnglats,
-          fillOpacity: 1 - Math.sqrt(area / 8000000000),// 面积越大透明度越高
-          strokeColor: 'white',
-          fillColor: 'red'
+          strokeOpacity: 0,
+          strokeWeight: 0,
+          fillColor: 'red',
+          fillOpacity: 0.5
         });
       }
     });
-    geojson.setMap(map)
+    const geojson_jkq = new AMap.GeoJSON({
+      geoJSON: geoJSON_jkq,
+      // 还可以自定义getMarker和getPolyline
+      getPolygon: function (geojson, lnglats) {
+        return new AMap.Polygon({
+          path: lnglats,
+          strokeOpacity: 0,
+          strokeWeight: 0,
+          fillColor: 'grey',
+          fillOpacity: 0.4
+        });
+      }
+    });
+    geojson_xzm.setMap(map)
+    geojson_jkq.setMap(map)
 
     // 获取设备数据信息
     const res = await getDeviceData()
@@ -277,6 +290,42 @@ export default class FlightStatus extends React.Component {
       })
       console.log(map.getZoom())
     });
+  }
+
+  // 创建机场障碍物限制面图层
+  createXZM = () => {
+    const geoJSON_xzm = require('../../assets/airport_xzm.json')
+    const geojson_xzm = new AMap.GeoJSON({
+      geoJSON: geoJSON_xzm,
+      getPolygon: (geojson, lnglats) => {
+        return new AMap.Polygon({
+          path: lnglats,
+          strokeOpacity: 0,
+          strokeWeight: 0,
+          fillColor: 'red',
+          fillOpacity: 0.5
+        })
+      }
+    })
+    geojson_xzm.setMap(this.map)
+  }
+  
+  // 创建机场净空区图层
+  createJKQ = () => {
+    const geoJSON_jkq = require('../../assets/airport_jkq.json')
+    const geojson_jkq = new AMap.GeoJSON({
+      geoJSON: geoJSON_jkq,
+      getPolygon: function (geojson, lnglats) {
+        return new AMap.Polygon({
+          path: lnglats,
+          strokeOpacity: 0,
+          strokeWeight: 0,
+          fillColor: 'grey',
+          fillOpacity: 0.5
+        });
+      }
+    });
+    geojson_jkq.setMap(this.map)
   }
 
   // 修改地图图层
