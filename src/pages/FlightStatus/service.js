@@ -1,8 +1,9 @@
 import request from '@/utils/request';
 
 //获取用户设备数据
-export async function getDeviceData() {
-  return request('/api/v1/device/data');
+export async function getDevice() {
+  return request('/drone/v1/device');
+  // return request('/api/v1/device/data');
 }
 
 //通过id获取设备数据详情

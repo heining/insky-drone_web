@@ -13,11 +13,11 @@ import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { GPS } from '@/utils/gpstogd'
-import { getDeviceData, getDeviceDataId } from './service';
+import { getDevice } from './service';
 import styles from './index.less'
 import { MediaPlayer, LayerSelector } from './components/index';
 
-const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge']
+const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge', 'y6ge', 'm4ge', 'l6v5']
 const colors = {
   red5: '#ff4d4f',
   volcano5: '#ff7a45',
@@ -64,15 +64,35 @@ export default class FlightStatus extends React.Component {
   async componentDidMount() {
     // this.clickId = ''
     const that = this
+
+    // 获取所在位置中心坐标
+    const geolocation = new AMap.Geolocation({
+      enableHighAccuracy: true,//是否使用高精度定位，默认:true
+      timeout: 10000,          //超过10秒后停止定位，默认：5s
+      buttonPosition: 'RB',    //定位按钮的停靠位置
+      buttonOffset: new AMap.Pixel(10, 30),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+      zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
+    })
+    let center
+    geolocation.getCurrentPosition((status, res) => {
+      if (status === 'complete') {
+        center = res.position
+        console.log(res.position)
+      } else {
+        center = [113.57131744384767, 22.271298103688736]
+      }
+    })
+    
     //创建地图，并传入L7
     const map = new AMap.Map('map', {
       // viewMode: '3D',
       // pitch: 0,
-      center: [113.57131744384767, 22.271298103688736],
+      center: center,
       resizeEnable: true,
       showIndoorMap: false,
-      zoom: 8,
+      zoom: 18,
     })
+    map.addControl(geolocation)
     const scene = new Scene({
       id: 'map',
       map: new GaodeMap({
@@ -130,73 +150,9 @@ export default class FlightStatus extends React.Component {
     geojson_jkq.setMap(map)
 
     // 获取设备数据信息
-    const res = await getDeviceData()
+    const res = await getDevice()
     if (res.status) return
     const data = res.data
-    // const data = [
-    //   {
-    //     "deviceId": 'insky760001',
-    //     "battery": {
-    //       "voltage": 100,
-    //       "current": 88,
-    //       "remaining": 20
-    //     },
-    //     "gps": {
-    //       "latitude": 31.231298103688736,
-    //       "longitude": 121.56131744384767,
-    //       "altitude": 0
-    //     },
-    //     "speed": {
-    //       "groundSpeed": 0,  //地面速度
-    //       "climbSpeed": 0   //爬升速度             
-    //     },
-    //     "attitude": {
-    //       "roll": 0,
-    //       "pitch": 0,
-    //       "yaw": 0
-    //     },
-    //     "status": {
-    //       "connected": false,
-    //       "armed": false,
-    //       "manualInput": false,
-    //       "mode": "drone",
-    //       "systemStatus": false
-    //     },
-    //     "mavlink": "",
-    //     "timestamp": new Date().valueOf()
-    //   },
-    //   {
-    //     "deviceId": 'insky760002',
-    //     "battery": {
-    //       "voltage": 100,
-    //       "current": 36,
-    //       "remaining": 20
-    //     },
-    //     "gps": {
-    //       "latitude": 31.205496352552,
-    //       "longitude": 121.60260023525,
-    //       "altitude": 0
-    //     },
-    //     "speed": {
-    //       "groundSpeed": 0,  //地面速度
-    //       "climbSpeed": 0   //爬升速度             
-    //     },
-    //     "attitude": {
-    //       "roll": 0,
-    //       "pitch": 0,
-    //       "yaw": 0
-    //     },
-    //     "status": {
-    //       "connected": false,
-    //       "armed": false,
-    //       "manualInput": false,
-    //       "mode": "drone",
-    //       "systemStatus": false
-    //     },
-    //     "mavlink": "",
-    //     "timestamp": new Date().valueOf()
-    //   },
-    // ]
     console.log(data)
 
     // 初始化设备信息、轨迹
@@ -205,13 +161,13 @@ export default class FlightStatus extends React.Component {
     let lines = {}
     let points = {}
     for (let i in data) {
-      const lng = data[i].gps.longitude
-      const lat = data[i].gps.latitude
-      const marker = this.createDrone(markerColors[i], lng, lat, data[i])
+      // const lng = data[i].gps.longitude
+      // const lat = data[i].gps.latitude
+      const marker = this.createDrone(markerColors[i], data[i])
       const line = this.createLine()
-      devices[data[i].deviceId] = marker
-      lines[data[i].deviceId] = line
-      points[data[i].deviceId] = []
+      devices[data[i].id] = marker
+      lines[data[i].id] = line
+      points[data[i].id] = []
       markers.push(marker)
     }
     this.devices = devices
@@ -231,9 +187,9 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    // let ws = new WebSocket('ws://localhost:8888')
+    let ws = new WebSocket('ws://localhost:8888')
     // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
-    let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
+    // let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -245,16 +201,17 @@ export default class FlightStatus extends React.Component {
       try {
         const point = JSON.parse(e.data)
         console.log(point)
-        console.log(point.gps.longitude, point.gps.latitude)
         const lnglat = GPS.gcj_encrypt(point.gps.latitude, point.gps.longitude)
+        console.log(lnglat)
         const _point = new AMap.LngLat(lnglat[0], lnglat[1])
         points[point.deviceId].push(_point)
         devices[point.deviceId].setPosition(_point)
         devices[point.deviceId].setExtData(point)
+        devices[point.deviceId].setMap(map)
         console.log(that.state.clickdeId, point.deviceId)
         if (that.state.clickedId === point.deviceId) {
           infoWindow.setPosition(_point)
-          infoWindow.setContent(that.createInfoWindow(point, that.ts))
+          infoWindow.setContent(that.createInfoWindow(point))
         }
         lines[point.deviceId].setPath(points[point.deviceId])
       } catch (error) {
@@ -263,7 +220,7 @@ export default class FlightStatus extends React.Component {
       // points.push(point)
     }
 
-    map.add(markers);
+    // map.add(markers);
 
     // 创建地图类型切换插件
     // var type = new AMap.MapType({
@@ -309,7 +266,7 @@ export default class FlightStatus extends React.Component {
     })
     geojson_xzm.setMap(this.map)
   }
-  
+
   // 创建机场净空区图层
   createJKQ = () => {
     const geoJSON_jkq = require('../../assets/airport_jkq.json')
@@ -420,7 +377,7 @@ export default class FlightStatus extends React.Component {
   }
 
   // 创建自定义图标设备
-  createDrone(img, lng, lat, data) {
+  createDrone(img, data) {
     const that = this
     const icon = new AMap.Icon({
       image: require(`../../assets/icons/drone_${img}.png`),
@@ -428,7 +385,7 @@ export default class FlightStatus extends React.Component {
       imageSize: new AMap.Size(28, 28)
     });
     let marker = new AMap.Marker({
-      position: GPS.gcj_encrypt(lat, lng),
+      // position: GPS.gcj_encrypt(lat, lng),
       offset: new AMap.Pixel(-14, -14),
       icon: icon,
       extData: data
@@ -439,7 +396,7 @@ export default class FlightStatus extends React.Component {
       // that.setState({
       //   clickdeId: data.deviceId
       // })
-      that.state.clickedId = data.deviceId
+      that.state.clickedId = data.id
       that.changeInfoWin(data)
     })
     return marker
@@ -448,7 +405,7 @@ export default class FlightStatus extends React.Component {
   // 改变自定义窗体的状态
   changeInfoWin(_data) {
     const { clicked, remoteStream } = this.state
-    const data = this.devices[_data.deviceId].getExtData()
+    const data = this.devices[_data.id].getExtData()
     const isOpen = this.infoWindow.getIsOpen()
     const lnglat = GPS.gcj_encrypt(data.gps.latitude, data.gps.longitude)
     const _point = new AMap.LngLat(lnglat[0], lnglat[1])

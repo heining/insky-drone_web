@@ -22,6 +22,10 @@ export const GPS = {
 
   //GPS---高德
   gcj_encrypt : function ( wgsLat , wgsLon ) {
+      if(typeof(wgsLat) === 'string' || typeof(wgsLon) === 'string'){
+          wgsLat = Number(wgsLat)
+          wgsLon = Number(wgsLon)
+      }
       if (this.outOfChina(wgsLat, wgsLon))
           return {'lat': wgsLat, 'lon': wgsLon};
 

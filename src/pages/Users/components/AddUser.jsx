@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Modal } from 'antd';
 const FormItem = Form.Item;
 
-const AddDevice = props => {
+const AddUser = props => {
   const [form] = Form.useForm();
   const { modalVisible, onSubmit: handleAdd, onCancel } = props;
 
@@ -15,7 +15,7 @@ const AddDevice = props => {
   return (
     <Modal
       destroyOnClose
-      title="添加设备"
+      title="添加用户"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => onCancel()}
@@ -28,12 +28,12 @@ const AddDevice = props => {
           wrapperCol={{
             span: 15,
           }}
-          label="设备昵称"
-          name="name"
+          label="用户昵称"
+          name="nickname"
           rules={[
             {
               required: true,
-              message: '请输入设备昵称！',
+              message: '请输入用户昵称！',
             },
           ]}
         >
@@ -46,12 +46,12 @@ const AddDevice = props => {
           wrapperCol={{
             span: 15,
           }}
-          label="SN码"
-          name="sn"
+          label="账号名"
+          name="username"
           rules={[
             {
               required: true,
-              message: '请输入SN码！',
+              message: '请输入账号名！',
             },
           ]}
         >
@@ -64,12 +64,12 @@ const AddDevice = props => {
           wrapperCol={{
             span: 15,
           }}
-          label="设备型号"
-          name="type"
+          label="密码"
+          name="password"
           rules={[
             {
               required: true,
-              message: '请输入设备型号！',
+              message: '请输入密码！',
             },
           ]}
         >
@@ -82,12 +82,12 @@ const AddDevice = props => {
           wrapperCol={{
             span: 15,
           }}
-          label="机型"
-          name="model"
+          label="手机号"
+          name="phone"
           rules={[
             {
               required: true,
-              message: '请输入机型！',
+              message: '请输入手机号！',
             },
           ]}
         >
@@ -98,4 +98,4 @@ const AddDevice = props => {
   );
 };
 
-export default AddDevice;
+export default AddUser;

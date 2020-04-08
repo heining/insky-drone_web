@@ -10,13 +10,13 @@ const formLayout = {
   },
 };
 
-const UpdateDevice = props => {
-  const [deviceVals, setDeviceVals] = useState({
-    name: props.values.name,
-    sn: props.values.sn,
+const UpdateUser = props => {
+  const [userVals, setDeviceVals] = useState({
+    nickname: props.values.nickname,
+    username: props.values.username,
     id: props.values.id,
-    type: props.values.type,
-    model: props.values.model,
+    phone: props.values.phone,
+    password: props.values.password,
   });
   const [form] = Form.useForm();
   const {
@@ -28,56 +28,56 @@ const UpdateDevice = props => {
 
   const okHandle = async () => {
     const fieldsValue = await form.validateFields();
-    setDeviceVals({ ...deviceVals });
-    handleUpdate(deviceVals);
+    setDeviceVals({ ...userVals });
+    handleUpdate(userVals);
   };
 
   const renderContent = () => {
     return (
       <>
         <FormItem
-          name="name"
-          label="设备昵称"
+          name="nickname"
+          label="用户昵称"
           rules={[
             {
               required: true,
-              message: '请输入设备昵称！',
+              message: '请输入用户昵称！',
             },
           ]}
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          name="sn"
-          label="SN码"
+          name="username"
+          label="账户名"
           rules={[
             {
               required: true,
-              message: '请输入SN码！',
+              message: '请输入账户名！',
             },
           ]}
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          name="type"
-          label="设备型号"
+          name="password"
+          label="密码"
           rules={[
             {
               required: true,
-              message: '请输入设备型号！',
+              message: '请输入密码！',
             },
           ]}
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          name="model"
-          label="机型"
+          name="phone"
+          label="手机号"
           rules={[
             {
               required: true,
-              message: '请输入机型！',
+              message: '请输入手机号！',
             },
           ]}
         >
@@ -105,7 +105,7 @@ const UpdateDevice = props => {
         padding: '32px 40px 48px',
       }}
       destroyOnClose
-      title="设备修改"
+      title="用户修改"
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={() => handleUpdateModalVisible(false, values)}
@@ -115,11 +115,11 @@ const UpdateDevice = props => {
         {...formLayout}
         form={form}
         initialValues={{
-          name: deviceVals.name,
-          sn: deviceVals.sn,
-          id: deviceVals.id,
-          type: deviceVals.type,
-          model: deviceVals.model,
+          nickname: userVals.nickname,
+          phone: userVals.phone,
+          id: userVals.id,
+          username: userVals.username,
+          password: userVals.password,
         }}
         onValuesChange={(_, allValues) => setDeviceVals(allValues)}
       >
@@ -129,4 +129,4 @@ const UpdateDevice = props => {
   );
 };
 
-export default UpdateDevice;
+export default UpdateUser;

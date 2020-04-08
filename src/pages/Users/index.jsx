@@ -3,9 +3,9 @@ import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import AddDevice from './components/AddDevice';
-import UpdateDevice from './components/UpdateDevice';
-import { getUser, addUser, updateDevice, deleteDevice } from './service';
+import AddUser from './components/AddUser';
+import UpdateUser from './components/UpdateUser';
+import { getUser, addUser, updateUser, deleteUser, deleteUsers } from './service';
 /**
  * 添加节点
  * @param fields
@@ -34,7 +34,7 @@ const handleUpdate = async fields => {
   const hide = message.loading('正在修改');
   console.log(fields)
   try {
-    await updateDevice(fields);
+    await updateUser(fields);
     hide();
     message.success('修改成功');
     return true;
@@ -52,9 +52,19 @@ const handleUpdate = async fields => {
 const handleRemove = async (fields,actionRef) => {
 
   const hide = message.loading('正在删除');
-
+  
   try {
-    await deleteDevice(fields.id);
+    if(Object.prototype.toString.call(fields) === '[object Array]'){
+      let _ids = []
+      for(let field of fields){
+        _ids.push(field.id)
+      }
+      const ids = _ids.join()
+      console.log(ids)
+      await deleteUsers(ids)
+    }else{
+      await deleteUser(fields.id);
+    }
     hide();
     message.success('删除成功');
     if (actionRef.current) {
@@ -73,7 +83,7 @@ const Users = () => {
   const [sorter, setSorter] = useState({});
   const [AddModalVisible, handleAddModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [deviceData, setDeviceData] = useState({});
+  const [userData, setUserData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
@@ -81,16 +91,20 @@ const Users = () => {
       dataIndex: 'id',
     },
     {
-      title: '用户名',
-      dataIndex: 'name',
+      title: '用户昵称',
+      dataIndex: 'nickname',
+    },
+    {
+      title: '账号',
+      dataIndex: 'username',
     },
     {
       title: '密码',
-      dataIndex: 'sn',
+      dataIndex: 'password',
     },
     {
       title: '手机号码',
-      dataIndex: 'type',
+      dataIndex: 'phone',
       // valueEnum: {
       //   0: {
       //     text: '关闭',
@@ -111,10 +125,6 @@ const Users = () => {
       // },
     },
     {
-      title: '账号',
-      dataIndex: 'model',
-    },
-    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
@@ -123,14 +133,14 @@ const Users = () => {
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
-              setDeviceData(record);
+              setUserData(record);
             }}
           >
             修改
           </a>
           <Divider type="vertical" />
           <Popconfirm
-            title="确定删除该设备吗？"
+            title="确定删除该用户吗？"
             onConfirm={() => handleRemove(record,actionRef)}
             okText="确认"
             cancelText="取消"
@@ -165,14 +175,14 @@ const Users = () => {
                 <Menu
                   onClick={async e => {
                     if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
+                      await handleRemove(selectedRows,actionRef);
                       action.reload();
                     }
                   }}
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
+                  {/* <Menu.Item key="approval">批量审批</Menu.Item> */}
                 </Menu>
               }
             >
@@ -206,8 +216,9 @@ const Users = () => {
         columns={columns}
         rowSelection={{}}
       />
-      <AddDevice
+      <AddUser
         onSubmit={async value => {
+          console.log(value)
           const success = await handleAdd(value);
           if (success) {
             handleAddModalVisible(false);
@@ -219,14 +230,14 @@ const Users = () => {
         onCancel={() => handleAddModalVisible(false)}
         modalVisible={AddModalVisible}
       />
-      {deviceData && Object.keys(deviceData).length ? (
-        <UpdateDevice
+      {userData && Object.keys(userData).length ? (
+        <UpdateUser
           onSubmit={async value => {
             console.log(value)
             const success = await handleUpdate(value);
             if (success) {
               handleUpdateModalVisible(false);
-              setDeviceData({});
+              setUserData({});
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -234,10 +245,10 @@ const Users = () => {
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setDeviceData({});
+            setUserData({});
           }}
           updateModalVisible={updateModalVisible}
-          values={deviceData}
+          values={userData}
         />
       ) : null}
     </PageHeaderWrapper>

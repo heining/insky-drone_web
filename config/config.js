@@ -221,7 +221,8 @@ export default {
   }, // chainWebpack: webpackPlugin,
   proxy: {
     '/drone/': {
-      target: 'https://api.inskydrone.cn/drone/',
+      target: 'http://localhost:8089/api/',
+      // target: 'https://api.inskydrone.cn/drone/',
       changeOrigin: true,
       pathRewrite: { '^/drone/': '' },
       secure: false
