@@ -3,6 +3,7 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
+import router from 'umi/router'
 import { notification } from 'antd';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -28,14 +29,19 @@ const codeMessage = {
 const errorHandler = error => {
   console.log(error)
   const { response } = error;
+  console.log(response)
 
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
+    if(response.status === 401 || response.status === 403){
+      router.push('/login')
+    }else{
+      notification.warning({
+        message: '失败',
+        description: response.message,
+      });
+    }
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',

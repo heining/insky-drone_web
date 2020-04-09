@@ -47,7 +47,7 @@ const LoginItem = props => {
       return;
     }
 
-    message.success('获取验证码成功！验证码为：1234');
+    message.success('获取验证码成功！');
     setTiming(true);
   }, []);
   useEffect(() => {
@@ -102,6 +102,24 @@ const LoginItem = props => {
               >
                 {timing ? `${count} 秒` : '获取验证码'}
               </Button>
+            </Col>
+          </Row>
+        )}
+      </FormItem>
+    );
+  }else if(type === 'ImageCode'){
+    const inputProps = omit(otherProps, ['onGetCaptcha']);
+    return (
+      <FormItem shouldUpdate>
+        {({ getFieldValue }) => (
+          <Row gutter={8}>
+            <Col span={16}>
+              <FormItem name={name} {...options}>
+                <Input {...customProps} {...inputProps} />
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <img src="/code/image?height=38&width=200" />
             </Col>
           </Row>
         )}

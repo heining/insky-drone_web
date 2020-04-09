@@ -55,8 +55,10 @@ export default class FlightStatus extends React.Component {
   }
 
   componentWillUnmount() {
-    this.scene.destroy();
-    this.ws.close()
+    if(this.ws && this.scene){
+      this.scene.destroy();
+      this.ws.close()
+    }
     this.handleLeaveRoom();
     // clearTimeout(this.time)
   }
@@ -69,7 +71,7 @@ export default class FlightStatus extends React.Component {
     const geolocation = new AMap.Geolocation({
       enableHighAccuracy: true,//是否使用高精度定位，默认:true
       timeout: 10000,          //超过10秒后停止定位，默认：5s
-      buttonPosition: 'RB',    //定位按钮的停靠位置
+      buttonPosition: 'LB',    //定位按钮的停靠位置
       buttonOffset: new AMap.Pixel(10, 30),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
       zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
     })
@@ -187,8 +189,8 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    let ws = new WebSocket('ws://localhost:8888')
-    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
+    // let ws = new WebSocket('ws://localhost:8888')
+    let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
     // let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
@@ -528,7 +530,7 @@ export default class FlightStatus extends React.Component {
 
   renderLnglat = () => {
     const { zoom, lng, lat } = this.state
-    return <div style={{ position: 'absolute', display: 'flex', bottom: 3, left: '16%', color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
+    return <div style={{ position: 'absolute', display: 'flex', bottom: 3, left: '24%', color: '#001529', fontWeight: '600', textShadow: '#fff 2px 0 0,#fff 0 2px 0,#fff -2px 0 0,#fff 0 -2px 0' }}>
       {lng ?
         <div style={{ width: 130 }}>经度：{lng}</div> : <div></div>
       }

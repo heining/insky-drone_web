@@ -1,8 +1,12 @@
 import request from '@/utils/request';
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  console.log(params)
+  let url = `username=${params.username}&password=${params.password}&imageCode=${params.imageCode}`
+  if(params.rememberMe){
+    url = url + '&remember-me=true'
+  }
+  return request(`/authentication/form?${url}`, {
     method: 'POST',
-    data: params,
   });
 }
 export async function getFakeCaptcha(mobile) {

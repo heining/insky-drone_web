@@ -5,7 +5,7 @@ import { Link } from 'umi';
 import { connect } from 'dva';
 import styles from './style.less';
 import LoginFrom from './components/Login';
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginFrom;
+const { Tab, UserName, Password, ImageCode, Mobile, Captcha, Submit } = LoginFrom;
 
 const LoginMessage = ({ content }) => (
   <Alert
@@ -28,7 +28,7 @@ const Login = props => {
     const { dispatch } = props;
     dispatch({
       type: 'login/login',
-      payload: { ...values, type },
+      payload: { ...values, rememberMe:autoLogin },
     });
   };
 
@@ -41,7 +41,7 @@ const Login = props => {
           )}
 
           <UserName
-            name="userName"
+            name="username"
             placeholder="用户名"
             rules={[
               {
@@ -57,6 +57,16 @@ const Login = props => {
               {
                 required: true,
                 message: '请输入密码！',
+              },
+            ]}
+          />
+          <ImageCode
+            name='imageCode'
+            placeholder='验证码'
+            rules={[
+              {
+                required: true,
+                message: '请输入验证码！',
               },
             ]}
           />
@@ -95,7 +105,7 @@ const Login = props => {
         </Tab>
         <div>
           <Checkbox checked={autoLogin} onChange={e => setAutoLogin(e.target.checked)}>
-            自动登录
+            记住我
           </Checkbox>
           <a
             style={{
@@ -106,7 +116,7 @@ const Login = props => {
           </a>
         </div>
         <Submit loading={submitting}>登录</Submit>
-        <div className={styles.other}>
+        {/* <div className={styles.other}>
           其他登录方式
           <AlipayCircleOutlined className={styles.icon} />
           <TaobaoCircleOutlined className={styles.icon} />
@@ -114,7 +124,7 @@ const Login = props => {
           <Link className={styles.register} to="/user/register">
             注册账户
           </Link>
-        </div>
+        </div> */}
       </LoginFrom>
     </div>
   );

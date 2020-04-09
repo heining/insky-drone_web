@@ -46,12 +46,12 @@ const AddDevice = props => {
           wrapperCol={{
             span: 15,
           }}
-          label="SN码"
-          name="sn"
+          label="设备编号"
+          name="code"
           rules={[
             {
               required: true,
-              message: '请输入SN码！',
+              message: '请输入设备编号！',
             },
           ]}
         >

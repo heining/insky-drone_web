@@ -85,8 +85,8 @@ const Devices = () => {
       dataIndex: 'name',
     },
     {
-      title: 'SN码',
-      dataIndex: 'sn',
+      title: '设备编号',
+      dataIndex: 'code',
     },
     {
       title: '设备型号',

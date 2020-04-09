@@ -13,7 +13,7 @@ const formLayout = {
 const UpdateDevice = props => {
   const [deviceVals, setDeviceVals] = useState({
     name: props.values.name,
-    sn: props.values.sn,
+    code: props.values.code,
     id: props.values.id,
     type: props.values.type,
     model: props.values.model,
@@ -48,12 +48,12 @@ const UpdateDevice = props => {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          name="sn"
-          label="SN码"
+          name="code"
+          label="设备编号"
           rules={[
             {
               required: true,
-              message: '请输入SN码！',
+              message: '请输入设备编号！',
             },
           ]}
         >
@@ -116,7 +116,7 @@ const UpdateDevice = props => {
         form={form}
         initialValues={{
           name: deviceVals.name,
-          sn: deviceVals.sn,
+          code: deviceVals.code,
           id: deviceVals.id,
           type: deviceVals.type,
           model: deviceVals.model,

@@ -16,6 +16,7 @@ const LoginTab = props => {
   useEffect(() => {
     const uniqueId = generateId('login-tab-');
     const { tabUtil } = props;
+    console.log(uniqueId)
 
     if (tabUtil) {
       tabUtil.addTab(uniqueId);
