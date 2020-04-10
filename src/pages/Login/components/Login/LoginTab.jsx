@@ -12,11 +12,9 @@ const generateId = (() => {
 })();
 
 const LoginTab = props => {
-  console.log(props)
   useEffect(() => {
     const uniqueId = generateId('login-tab-');
     const { tabUtil } = props;
-    console.log(uniqueId)
 
     if (tabUtil) {
       tabUtil.addTab(uniqueId);

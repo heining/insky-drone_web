@@ -1,4 +1,16 @@
 npm run build
+
+mkdir /temp 
+
+git clone xx /temp
+
+cd /temp 
+
+cp -r .git ../dist
+
+cd ../dist
+
+
 cp -r dist/* ../build/drone_web
 cd ../build/drone_web
 git add .

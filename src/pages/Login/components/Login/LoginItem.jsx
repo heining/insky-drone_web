@@ -119,7 +119,7 @@ const LoginItem = props => {
               </FormItem>
             </Col>
             <Col span={8}>
-              <img src="/code/image?height=38&width=200" />
+              <img src="http://127.0.0.1:8089/code/image?height=38&width=200" />
             </Col>
           </Row>
         )}

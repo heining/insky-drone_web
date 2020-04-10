@@ -219,18 +219,25 @@ export default {
   manifest: {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
-  proxy: [{
-    context: ['/drone'],
-    // target: 'http://127.0.0.1:8089',
-    target: 'https://api.inskydrone.cn',
-    changeOrigin: true,
-    // secure: false
+  proxy: {
+    '/drone': {
+      target: 'http://127.0.0.1:8089/api',
+      // target: 'https://api.inskydrone.cn',
+      pathRewrite: {'^/drone' : ''},
+      changeOrigin: true,
+      secure: false
+    },
+    '/authentication': {
+      target: 'http://127.0.0.1:8089',
+      // target: 'https://api.inskydrone.cn',
+      changeOrigin: true,
+      secure: false
+    },
+    // '/code': {
+    //   target: 'http://127.0.0.1:8089',
+    //   // target: 'https://api.inskydrone.cn',
+    //   changeOrigin: true,
+    //   secure: false
+    // },
   },
-  {
-    context: ['/authentication', '/code'],
-    // target: 'http://127.0.0.1:8089',
-    target: 'https://api.inskydrone.cn',
-    changeOrigin: true,
-    // secure: false
-  }],
 };
