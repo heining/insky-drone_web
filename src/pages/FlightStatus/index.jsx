@@ -151,6 +151,8 @@ export default class FlightStatus extends React.Component {
     geojson_xzm.setMap(map)
     geojson_jkq.setMap(map)
 
+    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
+
     // 获取设备数据信息
     const res = await getDevice()
     if (res.status) return
@@ -191,7 +193,7 @@ export default class FlightStatus extends React.Component {
     // 新建websocket连接
     // let ws = new WebSocket('ws://localhost:8888')
     let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
-    // let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
+    // let ws = new WebSocket('wss://127.0.0.1:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {

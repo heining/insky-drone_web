@@ -71,7 +71,7 @@ export default {
   plugins,
   // hash: true,
   history: 'hash',
-  // publicPath: "https://lesuidao.cn/dist/",
+  // publicPath: "/dist/",
   targets: {
     ie: 11,
   },
@@ -220,17 +220,17 @@ export default {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
   proxy: [{
-    context: ['/drone/'],
-    target: 'http://127.0.0.1:8089/drone/',
-    // target: 'https://api.inskydrone.cn/drone/',
-    pathRewrite: { '^/drone/': '' },
+    context: ['/drone'],
+    // target: 'http://127.0.0.1:8089',
+    target: 'https://api.inskydrone.cn',
     changeOrigin: true,
-    secure: false
+    // secure: false
   },
   {
-    context: ['/authentication/', '/code/'],
-    target: 'http://127.0.0.1:8089',
+    context: ['/authentication', '/code'],
+    // target: 'http://127.0.0.1:8089',
+    target: 'https://api.inskydrone.cn',
     changeOrigin: true,
-    secure: false
+    // secure: false
   }],
 };
