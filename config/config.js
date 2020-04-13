@@ -70,7 +70,7 @@ export default {
   // base: 'http://api.inskylab.cn/api',
   plugins,
   // hash: true,
-  history: 'hash',
+  // history: 'hash',
   // publicPath: "/dist/",
   targets: {
     ie: 11,
@@ -233,11 +233,11 @@ export default {
       changeOrigin: true,
       secure: false
     },
-    // '/code': {
-    //   target: 'http://127.0.0.1:8089',
-    //   // target: 'https://api.inskydrone.cn',
-    //   changeOrigin: true,
-    //   secure: false
-    // },
+    '/code': {
+      target: 'http://127.0.0.1:8089',
+      // target: 'https://api.inskydrone.cn',
+      changeOrigin: true,
+      secure: false
+    },
   },
 };

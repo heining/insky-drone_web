@@ -2,20 +2,20 @@ import request from '@/utils/request';
 
 //获取用户设备
 export async function getDevice(params) {
-  return request('/drone/v1/device', {
+  return request('/api/v1/device', {
     // params,
   });
 }
 
 export async function addDevice(params) {
-  return request('/drone/v1/device', {
+  return request('/api/v1/device', {
     method: 'POST',
     data: { ...params}
   })
 }
 
 export async function updateDevice(params) {
-  return request('/drone/v1/device', {
+  return request('/api/v1/device', {
     method: 'PUT',
     data: { ...params}
   })
@@ -23,7 +23,7 @@ export async function updateDevice(params) {
 
 export async function deleteDevice(params) {
   console.log(params)
-  return request(`drone/v1/device/${params}`, {
+  return request(`api/v1/device/${params}`, {
     method: 'DELETE',
   })
 }

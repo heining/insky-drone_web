@@ -111,7 +111,7 @@ const LoginItem = props => {
     const inputProps = omit(otherProps, ['onGetCaptcha']);
     return (
       <FormItem shouldUpdate>
-        {({ getFieldValue }) => (
+        {() => (
           <Row gutter={8}>
             <Col span={16}>
               <FormItem name={name} {...options}>
@@ -119,7 +119,7 @@ const LoginItem = props => {
               </FormItem>
             </Col>
             <Col span={8}>
-              <img src="http://127.0.0.1:8089/code/image?height=38&width=200" />
+              <img src="/code/image?height=38&width=200" />
             </Col>
           </Row>
         )}

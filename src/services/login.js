@@ -1,5 +1,9 @@
 import request from '@/utils/request';
 
+export function getImgCode() {
+  return request('/code/image?height=38&width=200')
+}
+
 export async function fakeAccountLogin(params) {
   console.log(params)
   let searchParams = new URLSearchParams()
