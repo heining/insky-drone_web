@@ -35,7 +35,7 @@ const colors = {
 }
 const AppId = 'urtc-pynapzli'
 const AppKey = '384d6fc6b005a8d2897f6225c18f30c9'
-const UserId = 'afnyhnizq9l4l9ev_camera3008'
+const UserId = 'afnyhnizq9l4l9ev_camera3008352352352352'
 // const RoomId = '123'
 
 export default class FlightStatus extends React.Component {
@@ -156,8 +156,9 @@ export default class FlightStatus extends React.Component {
     // 获取设备数据信息
     const res = await getDevice()
     if (res.status) return
-    const data = res.data
-    console.log(data)
+    const _data = res.data
+
+    const data = this.dataParse(_data)
 
     // 初始化设备信息、轨迹
     let markers = []
@@ -169,9 +170,9 @@ export default class FlightStatus extends React.Component {
       // const lat = data[i].gps.latitude
       const marker = this.createDrone(markerColors[i], data[i])
       const line = this.createLine()
-      devices[data[i].id] = marker
-      lines[data[i].id] = line
-      points[data[i].id] = []
+      devices[data[i].deviceId] = marker
+      lines[data[i].deviceId] = line
+      points[data[i].deviceId] = []
       markers.push(marker)
     }
     this.devices = devices
@@ -192,8 +193,8 @@ export default class FlightStatus extends React.Component {
 
     // 新建websocket连接
     // let ws = new WebSocket('ws://localhost:8888')
-    let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
-    // let ws = new WebSocket('wss://127.0.0.1:8089/websocket')
+    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
+    let ws = new WebSocket('ws://127.0.0.1:8089/websocket')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -224,7 +225,7 @@ export default class FlightStatus extends React.Component {
       // points.push(point)
     }
 
-    // map.add(markers);
+    map.add(markers);
 
     // 创建地图类型切换插件
     // var type = new AMap.MapType({
@@ -251,6 +252,20 @@ export default class FlightStatus extends React.Component {
       })
       console.log(map.getZoom())
     });
+  }
+
+  //
+  dataParse = (data) => {
+    const _data = JSON.parse(JSON.stringify(data))
+    for(const v of _data){
+      for(let i in v){
+        if(typeof(v[i]) === 'string'){
+          v[i] = JSON.parse(v[i])
+        }
+      }
+    }
+    console.log(_data)
+    return _data
   }
 
   // 创建机场障碍物限制面图层
@@ -320,10 +335,10 @@ export default class FlightStatus extends React.Component {
     middle.className = styles.middle
     const middle_l = document.createElement('div')
     middle_l.className = styles.middle_l
-    middle_l.innerHTML = `地面速度：${data.speed.groundSpeed}</br>爬升速度：${data.speed.climbSpeed}</br>姿态角：${data.gps.altitude}`
+    middle_l.innerHTML = `地面速度：${(data.speed.groundSpeed).toFixed(2)} m/s</br>爬升速度：${(data.speed.climbSpeed).toFixed(2)} m/s</br>姿态角：${data.gps.altitude}`
     const middle_r = document.createElement('div')
     middle_r.className = styles.middle_r
-    middle_r.innerHTML = `经度：${data.gps.longitude}</br>纬度：${data.gps.latitude}</br>电量：${data.battery.current}%`
+    middle_r.innerHTML = `经度：${(data.gps.longitude).toFixed(6)}</br>纬度：${(data.gps.latitude).toFixed(6)}</br>电量：${(data.battery.current).toFixed(2)}%`
     middle.appendChild(middle_l)
     middle.appendChild(middle_r)
     infoWin.appendChild(middle)
@@ -345,7 +360,7 @@ export default class FlightStatus extends React.Component {
         this.handleLeaveRoom()
       } else {
         console.log(this.state.clickedId)
-        this.createURTC(AppId, AppKey, this.state.clickedId, UserId)
+        this.createURTC(AppId, AppKey, '1248148100363587585', UserId)
         this.handleJoinRoom()
       }
     }
@@ -357,7 +372,6 @@ export default class FlightStatus extends React.Component {
   }
 
   changeLine(data) {
-    console.log(data)
     let line = this.lines[data.deviceId]
     if (line.extData) {
       line.hide()
@@ -382,6 +396,8 @@ export default class FlightStatus extends React.Component {
 
   // 创建自定义图标设备
   createDrone(img, data) {
+    const gps = data.gps
+    const position = GPS.gcj_encrypt(gps.latitude, gps.longitude)
     const that = this
     const icon = new AMap.Icon({
       image: require(`../../assets/icons/drone_${img}.png`),
@@ -389,7 +405,7 @@ export default class FlightStatus extends React.Component {
       imageSize: new AMap.Size(28, 28)
     });
     let marker = new AMap.Marker({
-      // position: GPS.gcj_encrypt(lat, lng),
+      position,
       offset: new AMap.Pixel(-14, -14),
       icon: icon,
       extData: data
@@ -400,7 +416,7 @@ export default class FlightStatus extends React.Component {
       // that.setState({
       //   clickdeId: data.deviceId
       // })
-      that.state.clickedId = data.id
+      that.state.clickedId = data.deviceId
       that.changeInfoWin(data)
     })
     return marker
@@ -409,9 +425,14 @@ export default class FlightStatus extends React.Component {
   // 改变自定义窗体的状态
   changeInfoWin(_data) {
     const { clicked, remoteStream } = this.state
-    const data = this.devices[_data.id].getExtData()
+    const data = this.devices[_data.deviceId].getExtData()
+    let gps = data.gps
     const isOpen = this.infoWindow.getIsOpen()
-    const lnglat = GPS.gcj_encrypt(data.gps.latitude, data.gps.longitude)
+    // if(!gps.longitude){
+    //   gps = JSON.parse(gps)
+    // }
+    // console.log(data.gps)
+    const lnglat = GPS.gcj_encrypt(gps.latitude, gps.longitude)
     const _point = new AMap.LngLat(lnglat[0], lnglat[1])
     if (isOpen) {
       console.log(clicked.deviceId, data.deviceId)
@@ -440,8 +461,7 @@ export default class FlightStatus extends React.Component {
 
   // 创建URTC的client
   createURTC = (appId, appKey, roomId, userId) => {
-    console.log(this.state.clickedId)
-    const token = sdk.generateToken(appId, appKey, roomId, userId);
+    const token = sdk.generateToken(appId, appKey, String(roomId), userId);
     this.client = new Client(appId, token);
     this.client.on('stream-added', (remoteStream) => {
       console.info('stream-added: ', remoteStream);
@@ -469,12 +489,13 @@ export default class FlightStatus extends React.Component {
 
   // 进入画面房间
   handleJoinRoom() {
-    const { clickedId, userId, isJoinedRoom } = this.state;
+    console.log(this.client)
+    const { clicked, userId, isJoinedRoom } = this.state;
     if (isJoinedRoom) {
       alert('已经加入了房间');
       return;
     }
-    this.client.joinRoom(clickedId, userId, () => {
+    this.client.joinRoom('1248148100363587585', userId, () => {
       message.config({
         top: 100,
       });

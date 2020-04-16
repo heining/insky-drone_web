@@ -27,19 +27,19 @@ const codeMessage = {
  */
 
 const errorHandler = error => {
-  console.log(error)
-  const { response } = error;
+  console.log(error.data)
+  const { response, data } = error;
   console.log(response)
 
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-    if(response.status === 401 || response.status === 403){
+    if (response.status === 401 || response.status === 403) {
       router.push('/login')
-    }else{
+    } else {
       notification.warning({
         message: '失败',
-        description: response.message,
+        description: data.message,
       });
     }
   } else if (!response) {
@@ -50,7 +50,6 @@ const errorHandler = error => {
   }
   return response;
 };
-console.log('error')
 /**
  * 配置request请求时的默认参数
  */

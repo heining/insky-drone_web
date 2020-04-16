@@ -11,8 +11,9 @@ export default {
   menu: {
     locale: true,
   },
-  title: '用心联接空间',
+  title: '极致飞行',
   pwa: false,
   iconfontUrl: '',
-  collapsed: false
+  siderWidth: 222,
+  // collapsed: false
 };

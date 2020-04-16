@@ -146,7 +146,7 @@ function updateDevice(req, res, u, b) {
 
 // mock device
 export default {
-  '/api/v1/device': (req, res) => {
+  '/local/v1/device': (req, res) => {
     res.send({
       code: 200,
       data: devices,

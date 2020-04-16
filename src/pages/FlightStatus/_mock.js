@@ -66,7 +66,7 @@ const deviceData = [
 
 // mock device
 export default {
-  '/api/v1/device/data': (req, res) => {
+  '/local/v1/device/data': (req, res) => {
     res.send({
       code: 200,
       data: deviceData,

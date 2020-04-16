@@ -25,6 +25,7 @@ const getFormItemOptions = ({ onChange, defaultValue, customProps = {}, rules })
 
 const LoginItem = props => {
   const [count, setCount] = useState(props.countDown || 0);
+  const [imgUrl, setImgUrl] = useState('/code/image?height=38&width=200')
   const [timing, setTiming] = useState(false); // 这么写是为了防止restProps中 带入 onChange, defaultValue, rules props tabUtil
 
   const {
@@ -107,7 +108,7 @@ const LoginItem = props => {
         )}
       </FormItem>
     );
-  }else if(type === 'ImageCode'){
+  } else if (type === 'ImageCode') {
     const inputProps = omit(otherProps, ['onGetCaptcha']);
     return (
       <FormItem shouldUpdate>
@@ -119,7 +120,7 @@ const LoginItem = props => {
               </FormItem>
             </Col>
             <Col span={8}>
-              <img src="/code/image?height=38&width=200" />
+              <img src={imgUrl} onClick={() => {setImgUrl('/code/image?height=38&width=200' + '&' + Math.random())}} />
             </Col>
           </Row>
         )}

@@ -12,7 +12,7 @@ import { GithubOutlined } from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
-import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
+import { isAntDesignPro, getAuthorityFromRouter, isAntDesignProOrDev } from '@/utils/utils';
 import logo from '../assets/logo.png';
 const noMatch = (
   <Result
@@ -27,6 +27,7 @@ const noMatch = (
   />
 );
 
+console.log(isAntDesignProOrDev())
 /**
  * use Authorized check all menu item
  */
@@ -154,12 +155,12 @@ const BasicLayout = props => {
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
-          <span>{route.breadcrumbName}</span>
-        );
+            <span>{route.breadcrumbName}</span>
+          );
       }}
       // footerRender={footerRender}
       menuDataRender={menuDataRender}
-      contentStyle={{margin:0}}
+      contentStyle={{ margin: 0 }}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}
