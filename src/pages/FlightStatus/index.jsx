@@ -13,7 +13,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { GPS } from '@/utils/gpstogd'
-import { getDevice } from './service';
+import { getDevice, wss } from './service';
 import styles from './index.less'
 import { MediaPlayer, LayerSelector } from './components/index';
 
@@ -192,9 +192,10 @@ export default class FlightStatus extends React.Component {
     let opened = false
 
     // 新建websocket连接
-    // let ws = new WebSocket('ws://localhost:8888')
-    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
-    let ws = new WebSocket('ws://127.0.0.1:8089/websocket')
+    // let ws = new WebSocket('ws://122.51.223.137:8089/websocket')
+    let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
+    // let ws = new WebSocket('ws://127.0.0.1:8089/websocket')
+    // let ws = wss()
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -202,18 +203,19 @@ export default class FlightStatus extends React.Component {
     }
     // 必须用属性的方式监听事件，监听函数的参数是事件对象
     ws.onmessage = function (e) {
+      let _data = unescape(e.data)
+      _data = _data.substring(0, _data.lastIndexOf('=')) + ''
       // 返回[]和{}做区分
       try {
-        const point = JSON.parse(e.data)
-        console.log(point)
-        const lnglat = GPS.gcj_encrypt(point.gps.latitude, point.gps.longitude)
-        console.log(lnglat)
+        const point = JSON.parse(_data)
+        // console.log(_data)
+        const lnglat = GPS.gcj_encrypt((point.gps.latitude).toFixed(6), (point.gps.longitude).toFixed(6))
         const _point = new AMap.LngLat(lnglat[0], lnglat[1])
         points[point.deviceId].push(_point)
         devices[point.deviceId].setPosition(_point)
         devices[point.deviceId].setExtData(point)
         devices[point.deviceId].setMap(map)
-        console.log(that.state.clickdeId, point.deviceId)
+        // console.log(that.state.clickdeId, point.deviceId)
         if (that.state.clickedId === point.deviceId) {
           infoWindow.setPosition(_point)
           infoWindow.setContent(that.createInfoWindow(point))
@@ -256,10 +258,11 @@ export default class FlightStatus extends React.Component {
 
   //
   dataParse = (data) => {
+    console.log(data)
     const _data = JSON.parse(JSON.stringify(data))
     for(const v of _data){
       for(let i in v){
-        if(typeof(v[i]) === 'string'){
+        if(v[i].includes('{')){
           v[i] = JSON.parse(v[i])
         }
       }
@@ -335,7 +338,7 @@ export default class FlightStatus extends React.Component {
     middle.className = styles.middle
     const middle_l = document.createElement('div')
     middle_l.className = styles.middle_l
-    middle_l.innerHTML = `地面速度：${(data.speed.groundSpeed).toFixed(2)} m/s</br>爬升速度：${(data.speed.climbSpeed).toFixed(2)} m/s</br>姿态角：${data.gps.altitude}`
+    middle_l.innerHTML = `地面速度：${(data.speed.groundSpeed).toFixed(2)} m/s</br>爬升速度：${(data.speed.climbSpeed).toFixed(2)} m/s</br>高度：${(data.gps.altitude).toFixed(2)}`
     const middle_r = document.createElement('div')
     middle_r.className = styles.middle_r
     middle_r.innerHTML = `经度：${(data.gps.longitude).toFixed(6)}</br>纬度：${(data.gps.latitude).toFixed(6)}</br>电量：${(data.battery.current).toFixed(2)}%`
@@ -398,6 +401,7 @@ export default class FlightStatus extends React.Component {
   createDrone(img, data) {
     const gps = data.gps
     const position = GPS.gcj_encrypt(gps.latitude, gps.longitude)
+    console.log(position)
     const that = this
     const icon = new AMap.Icon({
       image: require(`../../assets/icons/drone_${img}.png`),

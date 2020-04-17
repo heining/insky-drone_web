@@ -10,3 +10,8 @@ export async function getDevice() {
 export async function getDeviceDataId() {
   return request('http://api.inskylab.cn/api/v1/device');
 }
+
+// wss
+export async function wss() {
+  return request('/websocket')
+}

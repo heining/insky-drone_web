@@ -220,27 +220,27 @@ export default {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
   proxy: {
-    // '/api': {
-    //   target: 'http://127.0.0.1:8089',
-    //   // target: 'https://api.inskydrone.cn',
-    //   pathRewrite: {'^/drone' : ''},
-    //   changeOrigin: true,
-    //   secure: false
-    // },
-    // '/authentication': {
-    //   target: 'http://127.0.0.1:8089',
-    //   // target: 'https://api.inskydrone.cn',
-    //   changeOrigin: true,
-    //   secure: false
-    // },
-    // '/code': {
-    //   target: 'http://127.0.0.1:8089',
-    //   // target: 'https://api.inskydrone.cn',
-    //   changeOrigin: true,
-    //   secure: false
-    // },
+    '/api': {
+      target: 'http://127.0.0.1:8089',
+      // target: 'https://api.inskydrone.cn',
+      pathRewrite: {'^/drone' : ''},
+      changeOrigin: true,
+      secure: false
+    },
+    '/authentication': {
+      target: 'http://127.0.0.1:8089',
+      // target: 'https://api.inskydrone.cn',
+      changeOrigin: true,
+      secure: false
+    },
+    '/code': {
+      target: 'http://127.0.0.1:8089',
+      // target: 'https://api.inskydrone.cn',
+      changeOrigin: true,
+      secure: false
+    },
     // '/websocket': {
-    //   target: 'wss://api.inskydrone.cn/websocket',
+    //   target: 'ws://122.51.223.137:8089/websocket',
     //   // target: 'https://api.inskydrone.cn',
     //   changeOrigin: true,
     //   ws: true,
