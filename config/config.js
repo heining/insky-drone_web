@@ -139,7 +139,7 @@ export default {
               icon: 'file-add',
               path: '/dataserver',
               routes: [
-                { path: '/dataserver/fileupload', name: 'fileupload', component: './Welcome' },
+                { path: '/dataserver/fileupload', name: 'fileupload', component: './FileUpload' },
               ],
             },
             // {

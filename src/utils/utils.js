@@ -53,3 +53,14 @@ export const getRouteAuthority = (path, routeData) => {
   });
   return authorities;
 };
+export const toShowtime = (time) => {
+  if(typeof(time) === 'string'){
+    time = Number(time)
+  }
+  let _time = new Date(time)
+  const y = _time.getFullYear()
+  const m = ("0" + (_time.getMonth() + 1)).slice(-2)
+  const d = ("0" + _time.getDate()).slice(-2)
+  const showTime = y + "-" + m + "-" + d + " " + _time.toTimeString().substr(0,8);
+  return showTime
+};
