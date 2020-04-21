@@ -111,7 +111,9 @@ const LoginItem = props => {
   } else if (type === 'ImageCode') {
     const inputProps = omit(otherProps, ['onGetCaptcha']);
     return (
-      <FormItem shouldUpdate>
+      <FormItem
+        shouldUpdate
+      >
         {() => (
           <Row gutter={8}>
             <Col span={16}>

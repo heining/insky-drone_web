@@ -1,3 +1,3 @@
 git add .
-git commit -m '线上接口调试'
+git commit -m '文件上传功能调试'
 git push origin master

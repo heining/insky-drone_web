@@ -43,7 +43,12 @@ export async function getFiles(params) {
 }
 
 export async function uploadFile(params) {
-  return request('/api/v1/file/upload', {
-    method: 'POST'
+  let formdata = new FormData()
+  params.forEach(file => {
+    formdata.append('file',file)
+  })
+  return request(`/api/v1/file/upload/${2020}`, {
+    method: 'POST',
+    data: formdata
   })
 }

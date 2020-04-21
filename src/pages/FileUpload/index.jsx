@@ -5,64 +5,50 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { toShowtime } from '@/utils/utils';
 import ProTable from '@ant-design/pro-table';
 import AddFile from './components/AddFile';
-import { addUser, updateUser, deleteUser, deleteUsers, getFiles } from './service';
+import { addUser, updateUser, deleteUser, deleteUsers, getFiles, uploadFile } from './service';
+
 /**
- * 添加节点
+ * 上传文件
  * @param fields
  */
-
-const handleAdd = async fields => {
-  const hide = message.loading('正在添加');
+const handleUpload = async file => {
+  const hide = message.loading('正在上传');
   try {
-    const res = await addUser(fields)
+    const res = await uploadFile(file)
     console.log(res)
     hide();
-    message.success('添加成功');
-    return true;
+    if (res.message === '文件上传成功') {
+      message.success('上传成功');
+      return true;
+    } else {
+      message.error('上传失败请重试！');
+      return false;
+    }
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
+    message.error('上传失败请重试！');
     return false;
   }
 };
-/**
- * 更新节点
- * @param fields
- */
 
-const handleUpdate = async fields => {
-  const hide = message.loading('正在修改');
-  console.log(fields)
-  try {
-    await updateUser(fields);
-    hide();
-    message.success('修改成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('修改失败请重试！');
-    return false;
-  }
-};
 /**
- *  删除节点
+ *  删除文件
  * @param selectedRows
  */
-
-const handleRemove = async (fields,actionRef) => {
+const handleRemove = async (fields, actionRef) => {
 
   const hide = message.loading('正在删除');
-  
+
   try {
-    if(Object.prototype.toString.call(fields) === '[object Array]'){
+    if (Object.prototype.toString.call(fields) === '[object Array]') {
       let _ids = []
-      for(let field of fields){
+      for (let field of fields) {
         _ids.push(field.id)
       }
       const ids = _ids.join()
       console.log(ids)
       await deleteUsers(ids)
-    }else{
+    } else {
       await deleteUser(fields.id);
     }
     hide();
@@ -81,9 +67,7 @@ const handleRemove = async (fields,actionRef) => {
 
 const FileUpload = () => {
   const [sorter, setSorter] = useState({});
-  const [AddModalVisible, handleAddModalVisible] = useState(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [uploadModalVisible, handleUploadModalVisible] = useState(false);
   const actionRef = useRef();
   const columns = [
     {
@@ -131,17 +115,18 @@ const FileUpload = () => {
       render: (_, record) => (
         <>
           <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setUserData(record);
-            }}
+            href={record.url}
+            // onClick={() => {
+            //   console.log(record)
+            // }}
+            download
           >
             下载
           </a>
           <Divider type="vertical" />
           <Popconfirm
             title="确定删除该文件吗？"
-            onConfirm={() => handleRemove(record,actionRef)}
+            onConfirm={() => { }}
             okText="确认"
             cancelText="取消"
           >
@@ -166,8 +151,8 @@ const FileUpload = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleAddModalVisible(true)}>
-            <PlusOutlined /> 添加
+          <Button type="primary" onClick={() => handleUploadModalVisible(true)}>
+            <PlusOutlined /> 上传
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
@@ -175,7 +160,7 @@ const FileUpload = () => {
                 <Menu
                   onClick={async e => {
                     if (e.key === 'remove') {
-                      await handleRemove(selectedRows,actionRef);
+                      await handleRemove(selectedRows, actionRef);
                       action.reload();
                     }
                   }}
@@ -214,7 +199,7 @@ const FileUpload = () => {
           sort: params.sorter
         })}
         postData={data => {
-          for(let i of data){
+          for (let i of data) {
             i['type'] = i.name.split('.')[1]
             i['showTime'] = toShowtime(i.uploadTime)
           }
@@ -224,18 +209,18 @@ const FileUpload = () => {
         rowSelection={{}}
       />
       <AddFile
-        onSubmit={async value => {
-          console.log(value)
-          const success = await handleAdd(value);
-          if (success) {
-            handleAddModalVisible(false);
+        onSubmit={async file => {
+          console.log(file)
+          const res = await handleUpload(file);
+          if (res) {
+            handleUploadModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
-        onCancel={() => handleAddModalVisible(false)}
-        modalVisible={AddModalVisible}
+        onCancel={() => handleUploadModalVisible(false)}
+        modalVisible={uploadModalVisible}
       />
     </PageHeaderWrapper>
   );

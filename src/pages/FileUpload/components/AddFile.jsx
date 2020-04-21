@@ -1,38 +1,15 @@
-import React from 'react';
-import { Form, Input, Modal, Upload } from 'antd';
+import React, { useState } from 'react';
+import { Modal, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-const FormItem = Form.Item;
 const { Dragger } = Upload;
 
-const options = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  beforeUpload: (file,fileList) => {
-    console.log(file,fileList)
-    return false
-  }
-};
-
 const AddFile = props => {
-  const [form] = Form.useForm();
-  const { modalVisible, onSubmit: handleAdd, onCancel } = props;
+  const [files, setFiles] = useState([])
+  const [forbidden,setForbidden] = useState(false)
+  const { modalVisible, onSubmit: handleUpload, onCancel } = props;
 
   const okHandle = async () => {
-    const fieldsValue = await form.validateFields();
-    form.resetFields();
-    handleAdd(fieldsValue);
+    handleUpload(files);
   };
 
   return (
@@ -44,7 +21,28 @@ const AddFile = props => {
       onOk={okHandle}
       onCancel={() => onCancel()}
     >
-      <Dragger {...options}>
+      <Dragger
+        name='file'
+        // multiple
+        disabled={forbidden}
+        action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
+        onChange={(info) => {
+          console.log(info)
+          const { status } = info.file;
+          if (status !== 'uploading') {
+            console.log(info.file, info.fileList)
+          }
+          if (status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully.`);
+          } else if (status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          }
+        }}
+        beforeUpload={(file, fileList) => {
+          setFiles(fileList)
+          return false
+        }}
+      >
         <p style={{ color: '#1e78f0', marginBottom: 20 }} >
           <InboxOutlined style={{ fontSize: 48 }} />
         </p>
