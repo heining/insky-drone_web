@@ -5,7 +5,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { toShowtime } from '@/utils/utils';
 import ProTable from '@ant-design/pro-table';
 import AddFile from './components/AddFile';
-import { addUser, updateUser, deleteUser, deleteUsers, getFiles, uploadFile } from './service';
+import { deleteUser, deleteUsers, getFiles, uploadFile } from './service';
 
 /**
  * 上传文件
