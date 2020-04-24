@@ -134,6 +134,44 @@ export default {
                 },
               ]
             },
+            // {
+            //   name: 'command',
+            //   icon: 'file-add',
+            //   path: '/command',
+            //   routes: [
+            //     { path: '/command/planapply', name: 'planapply', component: './FileUpload' },
+            //     { path: '/command/routemanage', name: 'routemanage', component: './FileUpload' },
+            //     { path: '/command/fastcommand', name: 'fastcommand', component: './FileUpload' },
+            //   ],
+            // },
+            {
+              name: 'flightplan',
+              icon: 'file-add',
+              path: '/flightplan',
+              routes: [
+                {
+                  path: '/flightplan/planapplication',
+                  name: 'planapplication',
+                  routes: [
+                    { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
+                    { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
+                  ]
+                },
+                {
+                  path: '/flightplan/command',
+                  name: 'command',
+                  routes: [
+                    { path: '/flightplan/command/routeplan', name: 'routeplan', component: './Command' },
+                    { path: '/flightplan/command/routemanage', name: 'routemanage', component: './Welcome' },
+                  ]
+                },
+                {
+                  path: '/flightplan/fastcommand',
+                  name: 'fastcommand',
+                  component: './Welcome'
+                },
+              ],
+            },
             {
               name: 'dataserver',
               icon: 'file-add',
@@ -142,28 +180,6 @@ export default {
                 { path: '/dataserver/fileupload', name: 'fileupload', component: './FileUpload' },
               ],
             },
-            // {
-            //   name: 'flightplan',
-            //   icon: 'file-add',
-            //   path: '/flightplan',
-            //   routes: [
-            //     {
-            //       path: '/flightplan/planapplication',
-            //       name: 'planapplication',
-            //       routes: [
-            //         { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
-            //         { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
-            //       ]
-            //     },
-            //     {
-            //       path: '/flightplan/command',
-            //       name: 'command',
-            //       routes: [
-            //         { path: '/flightplan/command/airlineplan', name: 'airlineplan', component: './Welcome' },
-            //       ]
-            //     },
-            //   ],
-            // },
             {
               component: './404',
             },

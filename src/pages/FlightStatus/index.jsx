@@ -8,6 +8,7 @@
 import * as React from 'react';
 import { LineLayer, Scene, Scale, Zoom, Popup, Marker, MarkerLayer, PointLayer } from '@antv/l7';
 import { GaodeMap, Mapbox } from '@antv/l7-maps';
+import AMapLoader from '@amap/amap-jsapi-loader';
 import { Descriptions, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
@@ -50,7 +51,7 @@ export default class FlightStatus extends React.Component {
       zoom: '',
       lng: '',
       lat: '',
-      flying:0,
+      flying: 0,
     }
   }
 
@@ -66,15 +67,37 @@ export default class FlightStatus extends React.Component {
   async componentDidMount() {
     // this.clickId = ''
     const that = this
-
+    let map
     //创建地图，并传入L7
-    const map = new AMap.Map('map', {
-      // viewMode: '3D',
-      // pitch: 0,
-      // center: center,
-      resizeEnable: true,
-      // zoom: 19,
+    await AMapLoader.load({
+      "key": "4ce6d31bb6e3a28c30920cd644d1a85f",   // 申请好的Web端开发者Key，首次调用 load 时必填
+      "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+      "plugins": [
+        'Map3D',
+        'AMap.MapType',
+        'AMap.Scale',
+        'AMap.DistrictSearch',
+        'AMap.Geolocation',
+        'AMap.GeoJSON'
+      ]  //插件列表
+    }).then((AMap) => {
+      map = new AMap.Map('map', {
+        // viewMode: '3D',
+        // pitch: 0,
+        // center: center,
+        resizeEnable: true,
+        // zoom: 19,
+      });
+    }).catch(e => {
+      console.log(e);
     })
+    // const map = new AMap.Map('map', {
+    //   // viewMode: '3D',
+    //   // pitch: 0,
+    //   // center: center,
+    //   resizeEnable: true,
+    //   // zoom: 19,
+    // })
     const scene = new Scene({
       id: 'map',
       map: new GaodeMap({

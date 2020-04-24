@@ -76,6 +76,7 @@
     "use-merge-value": "^1.0.1"
   },
   "devDependencies": {
+    "@amap/amap-jsapi-loader": "0.0.1",
     "@ant-design/pro-cli": "^1.0.17",
     "@types/classnames": "^2.2.7",
     "@types/express": "^4.17.0",
