@@ -11,6 +11,7 @@ import { GaodeMap, Mapbox } from '@antv/l7-maps';
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { Descriptions, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import WaypointsPanel from './components/WaypointsPanel'
 // import styles from './index.less'
 
 export default class Command extends React.Component {
@@ -43,7 +44,8 @@ export default class Command extends React.Component {
       "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
       "plugins": [
         'AMap.Scale',
-        'AMap.MouseTool'
+        'AMap.MouseTool',
+        'AMap.PolylineEditor'
       ]  //插件列表
     }).then((AMap) => {
       map = new AMap.Map('map', {
@@ -55,6 +57,18 @@ export default class Command extends React.Component {
       });
     }).catch(e => {
       console.log(e);
+    })
+
+    const mouseTool = new AMap.MouseTool(map)
+    mouseTool.polyline({
+      strokeColor:'#096dd9',
+      strokeWeight:5,
+      lineCap:'round'
+      //同Polyline的Option设置
+    });
+    mouseTool.on('draw',(e)=>{
+      console.log(e)
+      mouseTool.close()
     })
 
     // 比例尺空间展示
@@ -109,14 +123,13 @@ export default class Command extends React.Component {
             height: '100%',
           }}
         />
-        <div style={{ position: 'absolute', right: 48, marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, backgroundColor: '#47caff', borderRadius: 8 }}>
+        <div
+          style={{position: 'absolute', right: 48, marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, backgroundColor: '#47caff', borderRadius: 8 }}
+          onClick={()=>{}}
+        >
           <img src={require('../../assets/line.png')} style={{ width: 32, height: 32 }} />
         </div>
-        {/* {this.renderRemoteStream()}
-        {this.renderLnglat()}
-        {this.renderLayerSelector()}
-        {this.renderVideoLarge()}
-        <StatusNum style={{ position: 'absolute', right: 0, top: '50%' }} flying={this.state.flying} /> */}
+        <WaypointsPanel style={{position:'absolute',bottom:0,right:0}} />
       </div>
     );
   }

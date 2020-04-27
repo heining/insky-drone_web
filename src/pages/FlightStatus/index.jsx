@@ -9,13 +9,15 @@ import * as React from 'react';
 import { LineLayer, Scene, Scale, Zoom, Popup, Marker, MarkerLayer, PointLayer } from '@antv/l7';
 import { GaodeMap, Mapbox } from '@antv/l7-maps';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { Descriptions, message } from 'antd';
+import { Descriptions, message, Collapse, Switch, Row, Col } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import sdk, { Client } from 'urtc-sdk';
 import { RouteIcon } from '@/components/InskyIcon';
 import { getDevice, wss } from './service';
 import styles from './index.less'
-import { MediaPlayer, LayerSelector, StatusNum } from './components/index';
+import { MediaPlayer, LayerSelector, StatusNum, ToolsBar } from './components/index';
+
+const { Panel } = Collapse
 
 const markerColors = ['ger5', 'b4p4', 'c4o6', 'gep4', 'l6v5', 'm4ge', 'y6ge', 'm4ge', 'l6v5']
 const colors = {
@@ -117,7 +119,7 @@ export default class FlightStatus extends React.Component {
     this.satellite = satellite
 
     map.on('click', (e) => {
-      if (this.infoWindow.getIsOpen()) {
+      if (this.infoWindow && this.infoWindow.getIsOpen()) {
         this.infoWindow.close()
       }
     })
@@ -153,6 +155,11 @@ export default class FlightStatus extends React.Component {
     });
     map.add(geojson_xzm)
     map.add(geojson_jkq)
+
+    this.setState({
+      geojson_jkq,
+      geojson_xzm
+    })
 
     // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
 
@@ -190,15 +197,16 @@ export default class FlightStatus extends React.Component {
       // content: this.createInfoWindow(),
       // closeWhenClickMap: true,
       offset: new AMap.Pixel(0, -20),
-      autoMove: true
+      // autoMove: true,
+      // avoid: [20, 20, 20, 20]
     });
     this.infoWindow = infoWindow
 
     let opened = false
 
     // 新建websocket连接
-    // let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
-    let ws = new WebSocket('ws://localhost:8888')
+    let ws = new WebSocket('wss://api.inskydrone.cn/websocket')
+    // let ws = new WebSocket('ws://localhost:8888')
     this.ws = ws
     // 连接成功就会执行回调函数
     ws.onopen = function (params) {
@@ -206,12 +214,12 @@ export default class FlightStatus extends React.Component {
     }
     // 必须用属性的方式监听事件，监听函数的参数是事件对象
     ws.onmessage = function (e) {
-      // let _data = unescape(e.data)
-      // _data = _data.substring(0, _data.lastIndexOf('=')) + ''
+      let _data = unescape(e.data)
+      _data = _data.substring(0, _data.lastIndexOf('=')) + ''
       // 返回[]和{}做区分
       try {
-        const point = JSON.parse(e.data)
-        // const point = JSON.parse(_data)
+        // const point = JSON.parse(e.data)
+        const point = JSON.parse(_data)
         let statusData = []
         console.log(point)
         if (Object.prototype.toString.call(point) === '[object Object]') {
@@ -614,6 +622,57 @@ export default class FlightStatus extends React.Component {
     )
   }
 
+  renderLayerShow() {
+    return this.state.layerShow ? (
+      <Collapse
+        defaultActiveKey="1"
+        onChange={() => { }}
+        style={{ position: 'absolute', width: 240, marginTop: 76, right: 48 }}
+      >
+        <Panel header="空域图层" key="1" disabled showArrow={false}>
+          <Collapse defaultActiveKey="1" expandIconPosition='right'>
+            <Panel header="图层设置" key="1">
+              <Row gutter={[0, 8]}>
+                <Col span={18}>机场净空保护区</Col>
+                <Col span={6}>
+                  <Switch
+                    defaultChecked
+                    onChange={value => {
+                      if (value) {
+                        console.log(this.state.geojson_jkq);
+                        this.state.geojson_jkq.show();
+                      } else {
+                        this.state.geojson_jkq.hide();
+                      }
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col span={18}>机场障碍物限制面</Col>
+                <Col span={6}>
+                  <Switch
+                    defaultChecked
+                    onChange={value => {
+                      if (value) {
+                        console.log(this.state.geojson_xzm);
+                        this.state.geojson_xzm.show();
+                      } else {
+                        this.state.geojson_xzm.hide();
+                      }
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Panel>
+          </Collapse>
+        </Panel>
+      </Collapse>
+    ) : (
+        <div></div>
+      );
+  }
+
   render() {
     return (
       <div>
@@ -632,6 +691,13 @@ export default class FlightStatus extends React.Component {
         {this.renderLayerSelector()}
         {this.renderVideoLarge()}
         <StatusNum style={{ position: 'absolute', right: 0, top: '50%' }} flying={this.state.flying} />
+        <ToolsBar
+          style={{ position: 'absolute', right: 20, marginTop: 20 }}
+          onClick={value => {
+            this.setState({ layerShow: value });
+          }}
+        />
+        {this.renderLayerShow()}
       </div>
     );
   }

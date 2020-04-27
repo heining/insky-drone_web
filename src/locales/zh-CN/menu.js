@@ -17,7 +17,7 @@ export default {
   'menu.flightplan.planapplication':'计划申请',
   'menu.flightplan.planapplication.plansubmit':'计划提交',
   'menu.flightplan.planapplication.submitlist':'提交记录',
-  'menu.flightplan.command':'指挥操控',
+  'menu.flightplan.command':'航线管理',
   'menu.flightplan.command.routeplan':'航线规划',
   'menu.flightplan.command.routemanage':'航线管理',
   'menu.flightplan.fastcommand':'一键指挥',

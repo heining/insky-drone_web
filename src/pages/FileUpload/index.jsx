@@ -17,7 +17,7 @@ const handleUpload = async file => {
     const res = await uploadFile(file)
     console.log(res)
     hide();
-    if (res.message === '文件上传成功') {
+    if (res.message === '操作成功') {
       message.success('上传成功');
       return true;
     } else {
