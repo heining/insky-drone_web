@@ -3,9 +3,9 @@ import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import AddUser from './components/AddUser';
-import UpdateUser from './components/UpdateUser';
-import { getUser, addUser, updateUser, deleteUser, deleteUsers } from './service';
+import AddUserDriver from './components/AddUserDriver';
+import UpdateUserDriver from './components/UpdateUserDriver';
+import { getUserDriver, addUserDriver, updateUserDriver, deleteUserDriver, deleteUserDrivers } from './service';
 /**
  * 添加节点
  * @param fields
@@ -14,7 +14,7 @@ import { getUser, addUser, updateUser, deleteUser, deleteUsers } from './service
 const handleAdd = async fields => {
   const hide = message.loading('正在添加');
   try {
-    const res = await addUser(fields)
+    const res = await addUserDriver(fields)
     console.log(res)
     hide();
     message.success('添加成功');
@@ -34,7 +34,7 @@ const handleUpdate = async fields => {
   const hide = message.loading('正在修改');
   console.log(fields)
   try {
-    await updateUser(fields);
+    await updateUserDriver(fields);
     hide();
     message.success('修改成功');
     return true;
@@ -61,9 +61,9 @@ const handleRemove = async (fields,actionRef) => {
       }
       const ids = _ids.join()
       console.log(ids)
-      await deleteUsers(ids)
+      await deleteUserDrivers(ids)
     }else{
-      await deleteUser(fields.id);
+      await deleteUserDriver(fields.id);
     }
     hide();
     message.success('删除成功');
@@ -83,7 +83,7 @@ const UserDrivers = () => {
   const [sorter, setSorter] = useState({});
   const [AddModalVisible, handleAddModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [userDriverData, setUserDriverData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
@@ -145,7 +145,7 @@ const UserDrivers = () => {
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
-              setUserData(record);
+              setUserDriverData(record);
             }}
           >
             修改
@@ -168,7 +168,7 @@ const UserDrivers = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询设备"
+        headerTitle="查询驾驶员"
         actionRef={actionRef}
         rowKey="id"
         onChange={(_, _filter, _sorter) => {
@@ -220,7 +220,7 @@ const UserDrivers = () => {
             </span> */}
           </div>
         )}
-        request={params => getUser({
+        request={params => getUserDriver({
           limit: params.pageSize,
           page: params.current,
           sort: params.sorter
@@ -228,7 +228,7 @@ const UserDrivers = () => {
         columns={columns}
         rowSelection={{}}
       />
-      <AddUser
+      <AddUserDriver
         onSubmit={async value => {
           console.log(value)
           const success = await handleAdd(value);
@@ -242,14 +242,14 @@ const UserDrivers = () => {
         onCancel={() => handleAddModalVisible(false)}
         modalVisible={AddModalVisible}
       />
-      {userData && Object.keys(userData).length ? (
-        <UpdateUser
+      {userDriverData && Object.keys(userDriverData).length ? (
+        <UpdateUserDriver
           onSubmit={async value => {
             console.log(value)
             const success = await handleUpdate(value);
             if (success) {
               handleUpdateModalVisible(false);
-              setUserData({});
+              setUserDriverData({});
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -257,10 +257,10 @@ const UserDrivers = () => {
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setUserData({});
+            setUserDriverData({});
           }}
           updateModalVisible={updateModalVisible}
-          values={userData}
+          values={userDriverData}
         />
       ) : null}
     </PageHeaderWrapper>

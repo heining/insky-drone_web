@@ -1,27 +1,27 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
+import { Link } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import AddDeviceControl from './components/AddDeviceControl';
-import UpdateDeviceControl from './components/UpdateDeviceControl';
-import { getDeviceControl, addDeviceControl, updateDeviceControl, deleteDeviceControl } from './service';
+import AddArticle from './components/AddArticle';
+import { getAnnouncement, addAnnouncement, updateAnnouncement, deleteAnnuncement } from './service';
 /**
  * 添加节点
  * @param fields
  */
 
 const handleAdd = async fields => {
-  const hide = message.loading('正在添加');
+  const hide = message.loading('正在发布');
   try {
-    const res = await addDeviceControl(fields)
+    const res = await addAnnouncement(fields)
     console.log(res)
     hide();
-    message.success('添加成功');
+    message.success('发布成功');
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
+    message.error('发布失败请重试！');
     return false;
   }
 };
@@ -34,7 +34,7 @@ const handleUpdate = async fields => {
   const hide = message.loading('正在修改');
   console.log(fields)
   try {
-    await updateDeviceControl(fields);
+    await updateAnnouncement(fields);
     hide();
     message.success('修改成功');
     return true;
@@ -49,12 +49,12 @@ const handleUpdate = async fields => {
  * @param selectedRows
  */
 
-const handleRemove = async (fields,actionRef) => {
+const handleRemove = async (fields, actionRef) => {
 
   const hide = message.loading('正在删除');
 
   try {
-    await deleteDeviceControl(fields.id);
+    await deleteAnnuncement(fields.id);
     hide();
     message.success('删除成功');
     if (actionRef.current) {
@@ -69,28 +69,27 @@ const handleRemove = async (fields,actionRef) => {
   }
 };
 
-const DeviceControl = () => {
+const Announcement = () => {
   const [sorter, setSorter] = useState({});
   const [AddModalVisible, handleAddModalVisible] = useState(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [deviceControlData, setDeviceControlData] = useState({});
+  const [announcementData, setAnnouncementData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
-      title: '遥控器ID',
-      dataIndex: 'id',
+      title: '标题',
+      dataIndex: 'title',
     },
     {
-      title: '型号',
-      dataIndex: 'model',
+      title: '来源',
+      dataIndex: 'origin',
     },
     {
-      title: '驾驶员',
-      dataIndex: 'driver',
+      title: '分类',
+      dataIndex: 'type',
     },
     {
-      title: '接收机',
-      dataIndex: 'receiver',
+      title: '发布时间',
+      dataIndex: 'posttime',
       // valueEnum: {
       //   0: {
       //     text: '关闭',
@@ -111,27 +110,20 @@ const DeviceControl = () => {
       // },
     },
     {
-      title: '生产厂家',
-      dataIndex: 'manufacturer',
-    },
-    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
         <>
           <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setDeviceControlData(record);
-            }}
+            onClick={() => { }}
           >
-            修改
+            查看
           </a>
           <Divider type="vertical" />
           <Popconfirm
-            title="确定删除该遥控器吗？"
-            onConfirm={() => handleRemove(record,actionRef)}
+            title="确定删除该公告吗？"
+            onConfirm={() => handleRemove(record, actionRef)}
             okText="确认"
             cancelText="取消"
           >
@@ -146,7 +138,7 @@ const DeviceControl = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询遥控器"
+        headerTitle="查询公告"
         actionRef={actionRef}
         rowKey="id"
         onChange={(_, _filter, _sorter) => {
@@ -157,7 +149,7 @@ const DeviceControl = () => {
         }}
         toolBarRender={(action, { selectedRows }) => [
           <Button type="primary" onClick={() => handleAddModalVisible(true)}>
-            <PlusOutlined /> 添加
+            <PlusOutlined /> 发布
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
@@ -198,7 +190,7 @@ const DeviceControl = () => {
             </span> */}
           </div>
         )}
-        request={params => getDeviceControl({
+        request={params => getAnnouncement({
           limit: params.pageSize,
           page: params.current,
           sort: params.sorter
@@ -206,7 +198,7 @@ const DeviceControl = () => {
         columns={columns}
         rowSelection={{}}
       />
-      <AddDeviceControl
+      <AddArticle
         onSubmit={async value => {
           const success = await handleAdd(value);
           if (success) {
@@ -219,29 +211,8 @@ const DeviceControl = () => {
         onCancel={() => handleAddModalVisible(false)}
         modalVisible={AddModalVisible}
       />
-      {deviceControlData && Object.keys(deviceControlData).length ? (
-        <UpdateDeviceControl
-          onSubmit={async value => {
-            console.log(value)
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setDeviceControlData({});
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setDeviceControlData({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={deviceControlData}
-        />
-      ) : null}
     </PageHeaderWrapper>
   );
 };
 
-export default DeviceControl
+export default Announcement

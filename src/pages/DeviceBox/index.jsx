@@ -146,7 +146,7 @@ const DeviceBox = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询设备"
+        headerTitle="查询盒子"
         actionRef={actionRef}
         rowKey="id"
         onChange={(_, _filter, _sorter) => {

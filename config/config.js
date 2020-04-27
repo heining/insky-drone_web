@@ -143,8 +143,8 @@ export default {
                   path: '/flightplan/planapplication',
                   name: 'planapplication',
                   routes: [
-                    { path: '/flightplan/planapplication/plansubmit', name: 'plansubmit', component: './Welcome' },
-                    { path: '/flightplan/planapplication/submitlist', name: 'submitlist', component: './Welcome' }
+                    { path: '/flightplan/planapplication/planapply', name: 'planapply', component: './Planapply' },
+                    { path: '/flightplan/planapplication/planlist', name: 'planlist', component: './PlanList' }
                   ]
                 },
                 {
@@ -152,7 +152,7 @@ export default {
                   name: 'command',
                   routes: [
                     { path: '/flightplan/command/routeplan', name: 'routeplan', component: './Command' },
-                    { path: '/flightplan/command/routemanage', name: 'routemanage', component: './Welcome' },
+                    { path: '/flightplan/command/routemanage', name: 'routemanage', component: './RouteManage' },
                   ]
                 },
                 {
@@ -168,7 +168,14 @@ export default {
               path: '/dataserver',
               routes: [
                 { path: '/dataserver/fileupload', name: 'fileupload', component: './FileUpload' },
+                { path: '/dataserver/announcement', name: 'announcement', component: './Announcement' },
               ],
+            },
+            {
+              name: 'datacenter',
+              icon: 'global',
+              path: '/datacenter',
+              component:'./DataCenter'
             },
             {
               component: './404',

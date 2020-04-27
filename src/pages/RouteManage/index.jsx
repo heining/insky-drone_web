@@ -1,11 +1,12 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
+import { Link } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import AddDeviceControl from './components/AddDeviceControl';
-import UpdateDeviceControl from './components/UpdateDeviceControl';
-import { getDeviceControl, addDeviceControl, updateDeviceControl, deleteDeviceControl } from './service';
+import AddRoute from './components/AddRoute';
+import UpdateRoute from './components/UpdateRoute';
+import { getRoutes, addRoute, updateRoute, deleteRoute } from './service';
 /**
  * 添加节点
  * @param fields
@@ -14,7 +15,7 @@ import { getDeviceControl, addDeviceControl, updateDeviceControl, deleteDeviceCo
 const handleAdd = async fields => {
   const hide = message.loading('正在添加');
   try {
-    const res = await addDeviceControl(fields)
+    const res = await addRoute(fields)
     console.log(res)
     hide();
     message.success('添加成功');
@@ -34,7 +35,7 @@ const handleUpdate = async fields => {
   const hide = message.loading('正在修改');
   console.log(fields)
   try {
-    await updateDeviceControl(fields);
+    await updateRoute(fields);
     hide();
     message.success('修改成功');
     return true;
@@ -49,12 +50,12 @@ const handleUpdate = async fields => {
  * @param selectedRows
  */
 
-const handleRemove = async (fields,actionRef) => {
+const handleRemove = async (fields, actionRef) => {
 
   const hide = message.loading('正在删除');
 
   try {
-    await deleteDeviceControl(fields.id);
+    await deleteRoute(fields.id);
     hide();
     message.success('删除成功');
     if (actionRef.current) {
@@ -69,28 +70,24 @@ const handleRemove = async (fields,actionRef) => {
   }
 };
 
-const DeviceControl = () => {
+const RouteManage = () => {
   const [sorter, setSorter] = useState({});
   const [AddModalVisible, handleAddModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [deviceControlData, setDeviceControlData] = useState({});
+  const [routeData, setRouteData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
-      title: '遥控器ID',
-      dataIndex: 'id',
+      title: '航线名称',
+      dataIndex: 'name',
     },
     {
-      title: '型号',
-      dataIndex: 'model',
+      title: '创建时间',
+      dataIndex: 'createtime',
     },
     {
-      title: '驾驶员',
-      dataIndex: 'driver',
-    },
-    {
-      title: '接收机',
-      dataIndex: 'receiver',
+      title: '航线长度',
+      dataIndex: 'linelength',
       // valueEnum: {
       //   0: {
       //     text: '关闭',
@@ -111,8 +108,12 @@ const DeviceControl = () => {
       // },
     },
     {
-      title: '生产厂家',
-      dataIndex: 'manufacturer',
+      title: '航点个数',
+      dataIndex: 'pointNum',
+    },
+    {
+      title: '飞行次数',
+      dataIndex: 'times',
     },
     {
       title: '操作',
@@ -121,17 +122,26 @@ const DeviceControl = () => {
       render: (_, record) => (
         <>
           <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setDeviceControlData(record);
-            }}
+            onClick={() => { }}
+          >
+            查看
+          </a>
+          <Divider type="vertical" />
+          <a
+            onClick={() => { }}
           >
             修改
           </a>
           <Divider type="vertical" />
+          <a
+            onClick={() => { }}
+          >
+            导出
+          </a>
+          <Divider type="vertical" />
           <Popconfirm
-            title="确定删除该遥控器吗？"
-            onConfirm={() => handleRemove(record,actionRef)}
+            title="确定删除该航线吗？"
+            onConfirm={() => handleRemove(record, actionRef)}
             okText="确认"
             cancelText="取消"
           >
@@ -146,7 +156,7 @@ const DeviceControl = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询遥控器"
+        headerTitle="查询航线"
         actionRef={actionRef}
         rowKey="id"
         onChange={(_, _filter, _sorter) => {
@@ -156,9 +166,11 @@ const DeviceControl = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleAddModalVisible(true)}>
-            <PlusOutlined /> 添加
-          </Button>,
+          <Link to='/flightplan/command/routeplan'>
+            <Button type="primary">
+              <PlusOutlined /> 添加
+            </Button>
+          </Link>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
@@ -198,7 +210,7 @@ const DeviceControl = () => {
             </span> */}
           </div>
         )}
-        request={params => getDeviceControl({
+        request={params => getRoutes({
           limit: params.pageSize,
           page: params.current,
           sort: params.sorter
@@ -206,7 +218,7 @@ const DeviceControl = () => {
         columns={columns}
         rowSelection={{}}
       />
-      <AddDeviceControl
+      <AddRoute
         onSubmit={async value => {
           const success = await handleAdd(value);
           if (success) {
@@ -219,14 +231,14 @@ const DeviceControl = () => {
         onCancel={() => handleAddModalVisible(false)}
         modalVisible={AddModalVisible}
       />
-      {deviceControlData && Object.keys(deviceControlData).length ? (
-        <UpdateDeviceControl
+      {routeData && Object.keys(routeData).length ? (
+        <UpdateRoute
           onSubmit={async value => {
             console.log(value)
             const success = await handleUpdate(value);
             if (success) {
               handleUpdateModalVisible(false);
-              setDeviceControlData({});
+              setRouteData({});
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -234,14 +246,14 @@ const DeviceControl = () => {
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setDeviceControlData({});
+            setRouteData({});
           }}
           updateModalVisible={updateModalVisible}
-          values={deviceControlData}
+          values={routeData}
         />
       ) : null}
     </PageHeaderWrapper>
   );
 };
 
-export default DeviceControl
+export default RouteManage
