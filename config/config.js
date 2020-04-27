@@ -118,9 +118,9 @@ export default {
                   icon: 'crown',
                   routes: [
                     { path: '/resources/devices/aircrafts', name: 'aircrafts', component: './Devices' },
-                    { path: '/resources/devices/aircraftsbox', name: 'aircraftsbox', component: './Welcome' },
-                    { path: '/resources/devices/cameras', name: 'cameras', component: './Welcome' },
-                    { path: '/resources/devices/remotecontrol', name: 'remotecontrol', component: './Welcome' },
+                    { path: '/resources/devices/aircraftsbox', name: 'aircraftsbox', component: './DeviceBox' },
+                    { path: '/resources/devices/cameras', name: 'cameras', component: './DeviceCamera' },
+                    { path: '/resources/devices/remotecontrol', name: 'remotecontrol', component: './DeviceControl' },
                   ],
                 },
                 {
@@ -129,21 +129,11 @@ export default {
                   icon: 'user',
                   routes: [
                     { path: '/resources/personnel/users', name: 'users', component: './Users' },
-                    { path: '/resources/personnel/pilots', name: 'pilots', component: './Welcome' },
+                    { path: '/resources/personnel/pilots', name: 'pilots', component: './UserDrivers' },
                   ],
                 },
               ]
             },
-            // {
-            //   name: 'command',
-            //   icon: 'file-add',
-            //   path: '/command',
-            //   routes: [
-            //     { path: '/command/planapply', name: 'planapply', component: './FileUpload' },
-            //     { path: '/command/routemanage', name: 'routemanage', component: './FileUpload' },
-            //     { path: '/command/fastcommand', name: 'fastcommand', component: './FileUpload' },
-            //   ],
-            // },
             {
               name: 'flightplan',
               icon: 'file-add',

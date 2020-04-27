@@ -2,55 +2,59 @@ import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { toShowtime } from '@/utils/utils';
 import ProTable from '@ant-design/pro-table';
-import AddFile from './components/AddFile';
-import { deleteUser, deleteUsers, getFiles, uploadFile } from './service';
-
+import AddDeviceBox from './components/AddDeviceBox';
+import UpdateDeviceBox from './components/UpdateDeviceBox';
+import { getDeviceBox, addDeviceBox, updateDeviceBox, deleteDeviceBox } from './service';
 /**
- * 上传文件
+ * 添加节点
  * @param fields
  */
-const handleUpload = async file => {
-  const hide = message.loading('正在上传');
+
+const handleAdd = async fields => {
+  const hide = message.loading('正在添加');
   try {
-    const res = await uploadFile(file)
+    const res = await addDeviceBox(fields)
     console.log(res)
     hide();
-    if (res.message === '文件上传成功') {
-      message.success('上传成功');
-      return true;
-    } else {
-      message.error('上传失败请重试！');
-      return false;
-    }
+    message.success('添加成功');
+    return true;
   } catch (error) {
     hide();
-    message.error('上传失败请重试！');
+    message.error('添加失败请重试！');
     return false;
   }
 };
-
 /**
- *  删除文件
+ * 更新节点
+ * @param fields
+ */
+
+const handleUpdate = async fields => {
+  const hide = message.loading('正在修改');
+  console.log(fields)
+  try {
+    await updateDeviceBox(fields);
+    hide();
+    message.success('修改成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('修改失败请重试！');
+    return false;
+  }
+};
+/**
+ *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (fields, actionRef) => {
+
+const handleRemove = async (fields,actionRef) => {
 
   const hide = message.loading('正在删除');
 
   try {
-    if (Object.prototype.toString.call(fields) === '[object Array]') {
-      let _ids = []
-      for (let field of fields) {
-        _ids.push(field.id)
-      }
-      const ids = _ids.join()
-      console.log(ids)
-      await deleteUsers(ids)
-    } else {
-      await deleteUser(fields.id);
-    }
+    await deleteDeviceBox(fields.id);
     hide();
     message.success('删除成功');
     if (actionRef.current) {
@@ -65,30 +69,28 @@ const handleRemove = async (fields, actionRef) => {
   }
 };
 
-const FileUpload = () => {
+const DeviceBox = () => {
   const [sorter, setSorter] = useState({});
-  const [uploadModalVisible, handleUploadModalVisible] = useState(false);
+  const [AddModalVisible, handleAddModalVisible] = useState(false);
+  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [deviceBoxData, setDeviceBoxData] = useState({});
   const actionRef = useRef();
   const columns = [
     {
-      title: '文件ID',
+      title: '盒子ID',
       dataIndex: 'id',
     },
     {
-      title: '文件名',
-      dataIndex: 'name',
+      title: '型号',
+      dataIndex: 'model',
     },
     {
-      title: '文件大小',
-      dataIndex: 'size',
+      title: 'SN码',
+      dataIndex: 'sn',
     },
     {
-      title: '文件类型',
-      dataIndex: 'type',
-    },
-    {
-      title: '上传时间',
-      dataIndex: 'showTime',
+      title: '挂载设备',
+      dataIndex: 'linkdev',
       // valueEnum: {
       //   0: {
       //     text: '关闭',
@@ -109,24 +111,27 @@ const FileUpload = () => {
       // },
     },
     {
+      title: '生产厂家',
+      dataIndex: 'manufacturer',
+    },
+    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
         <>
           <a
-            href={record.url}
-            // onClick={() => {
-            //   console.log(record)
-            // }}
-            download
+            onClick={() => {
+              handleUpdateModalVisible(true);
+              setDeviceBoxData(record);
+            }}
           >
-            下载
+            修改
           </a>
           <Divider type="vertical" />
           <Popconfirm
-            title="确定删除该文件吗？"
-            onConfirm={() => { }}
+            title="确定删除该盒子吗？"
+            onConfirm={() => handleRemove(record,actionRef)}
             okText="确认"
             cancelText="取消"
           >
@@ -141,10 +146,9 @@ const FileUpload = () => {
       style={{ margin: 0 }}
     >
       <ProTable
-        headerTitle="查询文件"
+        headerTitle="查询设备"
         actionRef={actionRef}
         rowKey="id"
-        pagination={{pageSize:30,defaultPageSize:30}}
         onChange={(_, _filter, _sorter) => {
           setSorter(`${_sorter.field}_${_sorter.order}`);
         }}
@@ -152,8 +156,8 @@ const FileUpload = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleUploadModalVisible(true)}>
-            <PlusOutlined /> 上传
+          <Button type="primary" onClick={() => handleAddModalVisible(true)}>
+            <PlusOutlined /> 添加
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
@@ -161,14 +165,14 @@ const FileUpload = () => {
                 <Menu
                   onClick={async e => {
                     if (e.key === 'remove') {
-                      await handleRemove(selectedRows, actionRef);
+                      await handleRemove(selectedRows);
                       action.reload();
                     }
                   }}
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  {/* <Menu.Item key="approval">批量审批</Menu.Item> */}
+                  <Menu.Item key="approval">批量审批</Menu.Item>
                 </Menu>
               }
             >
@@ -194,37 +198,50 @@ const FileUpload = () => {
             </span> */}
           </div>
         )}
-        request={params => getFiles({
-          limit: 30,
+        request={params => getDeviceBox({
+          limit: params.pageSize,
           page: params.current,
           sort: params.sorter
         })}
-        postData={data => {
-          for (let i of data) {
-            i['type'] = i.name.split('.')[1]
-            i['showTime'] = toShowtime(i.uploadTime)
-          }
-          return data
-        }}
         columns={columns}
         rowSelection={{}}
       />
-      <AddFile
-        onSubmit={async file => {
-          console.log(file)
-          const res = await handleUpload(file);
-          if (res) {
-            handleUploadModalVisible(false);
+      <AddDeviceBox
+        onSubmit={async value => {
+          const success = await handleAdd(value);
+          if (success) {
+            handleAddModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
-        onCancel={() => handleUploadModalVisible(false)}
-        modalVisible={uploadModalVisible}
+        onCancel={() => handleAddModalVisible(false)}
+        modalVisible={AddModalVisible}
       />
+      {deviceBoxData && Object.keys(deviceBoxData).length ? (
+        <UpdateDeviceBox
+          onSubmit={async value => {
+            console.log(value)
+            const success = await handleUpdate(value);
+            if (success) {
+              handleUpdateModalVisible(false);
+              setDeviceBoxData({});
+              if (actionRef.current) {
+                actionRef.current.reload();
+              }
+            }
+          }}
+          onCancel={() => {
+            handleUpdateModalVisible(false);
+            setDeviceBoxData({});
+          }}
+          updateModalVisible={updateModalVisible}
+          values={deviceBoxData}
+        />
+      ) : null}
     </PageHeaderWrapper>
   );
 };
 
-export default FileUpload
+export default DeviceBox

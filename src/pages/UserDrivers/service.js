@@ -1,5 +1,9 @@
 import request from '@/utils/request';
 
+const drivers = [
+  {id:'1314092781',name:'李明',gender:'男',certificateType:'身份证',certificateNo:'320582200002295903',driveType:'飞行资格证',driveNo:'866803201',phone:18866655320}
+]
+
 //获取用户
 export async function getUser(params) {
   return request('/api/v1/user', {
@@ -33,24 +37,5 @@ export async function deleteUsers(params) {
   return request('api/v1/user/batch', {
     method: 'DELETE',
     data: params
-  })
-}
-
-export async function getFiles(params) {
-  params.sort = 1
-  params['data'] = null
-  return request('/api/v1/file', {
-    params
-  })
-}
-
-export async function uploadFile(params) {
-  let formdata = new FormData()
-  params.forEach(file => {
-    formdata.append('file',file)
-  })
-  return request(`/api/v1/file/upload/${2020}`, {
-    method: 'POST',
-    data: formdata
   })
 }
