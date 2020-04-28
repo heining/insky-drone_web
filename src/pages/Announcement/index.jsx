@@ -5,6 +5,7 @@ import { Link } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import AddArticle from './components/AddArticle';
+import ViewArticle from './components/ViewArticle';
 import { getAnnouncement, addAnnouncement, updateAnnouncement, deleteAnnuncement } from './service';
 /**
  * 添加节点
@@ -72,6 +73,7 @@ const handleRemove = async (fields, actionRef) => {
 const Announcement = () => {
   const [sorter, setSorter] = useState({});
   const [AddModalVisible, handleAddModalVisible] = useState(false);
+  const [viewModalVisible, handleViewModalVisible] = useState(false);
   const [announcementData, setAnnouncementData] = useState({});
   const actionRef = useRef();
   const columns = [
@@ -116,7 +118,10 @@ const Announcement = () => {
       render: (_, record) => (
         <>
           <a
-            onClick={() => { }}
+            onClick={() => {
+              handleViewModalVisible(true);
+              setAnnouncementData(record);
+            }}
           >
             查看
           </a>
@@ -210,6 +215,14 @@ const Announcement = () => {
         }}
         onCancel={() => handleAddModalVisible(false)}
         modalVisible={AddModalVisible}
+      />
+      <ViewArticle
+        onOk={() => {
+          handleViewModalVisible(false);
+          setAnnouncementData({});
+        }}
+        modalVisible={viewModalVisible}
+        values={announcementData}
       />
     </PageHeaderWrapper>
   );

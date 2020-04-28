@@ -16,7 +16,7 @@ const AddArticle = props => {
     <Modal
       destroyOnClose
       centered
-      title="添加公告"
+      title="发布公告"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => onCancel()}
@@ -56,7 +56,7 @@ const AddArticle = props => {
             },
           ]}
         >
-          <Input.TextArea placeholder="请输入" autoSize={{ minRows: 5, maxRows: 8 }} />
+          <Input.TextArea placeholder="请输入" rows={5} />
         </FormItem>
       </Form>
     </Modal>

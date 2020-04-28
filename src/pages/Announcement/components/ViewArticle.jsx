@@ -1,16 +1,8 @@
 import React from 'react';
-import { Form, Input, Modal } from 'antd';
-const FormItem = Form.Item;
+import { Form, Modal, Row, Col } from 'antd';
 
 const ViewArticle = props => {
-  const [form] = Form.useForm();
-  const { modalVisible, onSubmit: handleAdd, onCancel } = props;
-
-  const okHandle = async () => {
-    const fieldsValue = await form.validateFields();
-    form.resetFields();
-    handleAdd(fieldsValue);
-  };
+  const { modalVisible, onOk, values } = props;
 
   return (
     <Modal
@@ -18,47 +10,20 @@ const ViewArticle = props => {
       centered
       title="公告详情"
       visible={modalVisible}
-      onOk={() => onCancel()}
-      onCancel={() => onCancel()}
+      footer={null}
+      onOk={() => onOk()}
+      onCancel={() => onOk()}
     >
-      <Form form={form}>
-        <FormItem
-          labelCol={{
-            span: 6,
-          }}
-          wrapperCol={{
-            span: 15,
-          }}
-          label="标题"
-          name="title"
-          rules={[
-            {
-              required: true,
-              message: '请输入公告标题！',
-            },
-          ]}
-        >
-          <Input placeholder="请输入" />
-        </FormItem>
-        <FormItem
-          labelCol={{
-            span: 6,
-          }}
-          wrapperCol={{
-            span: 15,
-          }}
-          label="公告内容"
-          name="content"
-          rules={[
-            {
-              required: true,
-              message: '请输入公告内容！',
-            },
-          ]}
-        >
-          <Input.TextArea placeholder="请输入" autoSize={{ minRows: 5, maxRows: 8 }} />
-        </FormItem>
-      </Form>
+      <Row justify='center' align='middle'>
+        <Col span={12} style={{ textAlign: 'center', fontSize: 16, fontWeight: '600' }}>{values.title}</Col>
+      </Row>
+      <Row justify='space-between' gutter={[0, 20]}>
+        <Col span={10}>发布单位：{values.origin}</Col>
+        <Col span={10}>发布时间：{values.posttime}</Col>
+      </Row>
+      <Row>
+        <Col span={24}>{values.content}</Col>
+      </Row>
     </Modal>
   );
 };
