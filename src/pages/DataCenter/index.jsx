@@ -80,7 +80,7 @@ export default class DataCenter extends React.Component {
               <p style={{ margin: 0 }}>今日飞行时长 <span style={{fontSize:16, fontWeight: '600'}}> {'68'} </span> min</p>
             </Card>
           </Col>
-          <Col span={18}>
+          <Col span={8}>
             <Card bodyStyle={{ padding: '24px 24px 8px' }}>
               <Pie />
             </Card>

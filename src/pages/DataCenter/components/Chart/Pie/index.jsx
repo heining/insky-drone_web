@@ -51,12 +51,9 @@ const Pie = props => {
         autoFit
       >
         <Coordinate type='theta' innerRadius={0.5} />
-        <Axis name="percent" />
+        <Axis name="percent" visible={false} />
         <Legend position="right" />
-        <Tooltip
-          showTitle={false}
-          itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
-        />
+        <Tooltip showTitle={false}/>
         <Geom
           type="interval"
           adjust={'stack'}
