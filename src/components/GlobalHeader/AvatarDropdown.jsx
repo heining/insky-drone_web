@@ -63,14 +63,14 @@ class AvatarDropdown extends React.Component {
         </span>
       </HeaderDropdown>
     ) : (
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    );
+        <Spin
+          size="small"
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+        />
+      );
   }
 }
 

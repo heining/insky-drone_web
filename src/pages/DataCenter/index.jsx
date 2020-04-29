@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { Descriptions, message, Row, Col, Card, Statistic, Divider } from 'antd';
-import { G2, Chart, Geom, Axis, Tooltip, Coord, Label, Legend, View, Guide, Shape, Facet, Util } from "bizcharts";
-import DataSet from "@antv/data-set";
+import { Chart } from './components/index'
 // import styles from './index.less'
+
+const { Pie } = Chart
 
 export default class DataCenter extends React.Component {
   constructor() {
@@ -77,6 +78,11 @@ export default class DataCenter extends React.Component {
               />
               <Divider style={{ margin: '6px 0' }} />
               <p style={{ margin: 0 }}>今日飞行时长 <span style={{fontSize:16, fontWeight: '600'}}> {'68'} </span> min</p>
+            </Card>
+          </Col>
+          <Col span={18}>
+            <Card bodyStyle={{ padding: '24px 24px 8px' }}>
+              <Pie />
             </Card>
           </Col>
         </Row>
