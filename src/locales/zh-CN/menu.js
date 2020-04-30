@@ -22,5 +22,6 @@ export default {
   'menu.dataserver':'数据服务',
   'menu.dataserver.fileupload':'文件上传',
   'menu.dataserver.announcement':'公告记录',
-  'menu.datacenter':'数字化中心'
+  'menu.datacenter':'数字化中心',
+  'menu.3dmap':'3D地图',
 };

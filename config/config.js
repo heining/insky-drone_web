@@ -178,6 +178,12 @@ export default {
               component:'./DataCenter'
             },
             {
+              name: '3dmap',
+              icon: 'global',
+              path: '/3dmap',
+              component:'./Test'
+            },
+            {
               component: './404',
             },
           ],
@@ -260,4 +266,7 @@ export default {
     //   secure: false
     // },
   },
+  // module: {
+  //   unknownContextCritical: true,
+  // },
 };

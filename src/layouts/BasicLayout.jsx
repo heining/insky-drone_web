@@ -160,7 +160,7 @@ const BasicLayout = props => {
       }}
       // footerRender={footerRender}
       menuDataRender={menuDataRender}
-      contentStyle={{ margin: 0, position:'static' }}
+      contentStyle={{ margin: 0, position:'static',height:'100%' }}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}

@@ -1,6 +1,8 @@
 import React from 'react'
-import { G2, Chart, Coordinate, Axis, Legend, Tooltip, Geom, Interval } from "bizcharts";
+import { G2, Chart, Coordinate, Axis, Legend, Tooltip, Geom, Annotation } from "bizcharts";
 import DataSet from "@antv/data-set";
+
+console.log(Annotation.Text)
 
 const Pie = props => {
   const { DataView } = DataSet;
@@ -74,7 +76,7 @@ const Pie = props => {
             stroke: "#fff"
           }}
         >
-          {/* <Interval adjust="stack" /> */}
+          <Annotation.Text />
         </Geom>
       </Chart>
     </div>
